@@ -13,9 +13,11 @@ function createProduct(product) {
     // Balise récupérant les cartes dans le DOM
     const SectionCards = document.querySelector("#items");
 
+    const Link = document.createElement("a");
     const Cards = document.createElement("article");
+
     // Cards.dataset.id = product[i]._id;
-    // Cards.src = product[i].
+    //
 
     const ImgKanap = document.createElement("img");
     ImgKanap.src = product[i].imageUrl;
@@ -32,6 +34,7 @@ function createProduct(product) {
     DescriptionKanap.classList.add("productDescription");
     Cards.appendChild(DescriptionKanap);
 
-    SectionCards.appendChild(Cards);
+    Link.appendChild(Cards);
+    SectionCards.appendChild(Link);
   }
 }

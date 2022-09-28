@@ -14,6 +14,7 @@ function createProduct(product) {
     const SectionCards = document.querySelector("#items");
 
     const Link = document.createElement("a");
+    Link.href = "./product.html?id=" + product[i]._id;
     const Cards = document.createElement("article");
 
     // Cards.dataset.id = product[i]._id;

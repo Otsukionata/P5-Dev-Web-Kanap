@@ -25,8 +25,8 @@ fetch("http://localhost:3000/api/products/" + ID)
   })
   .then(function (product) {
     const Image = document.createElement("img");
-    Image.src = imageURL;
-    Image.alt = altTxt;
+    Image.src = product.imageUrl;
+    Image.alt = product.altTxt;
     const KanapImg = document.querySelector(".item__img");
     KanapImg.appendChild(Image);
 
@@ -38,7 +38,6 @@ fetch("http://localhost:3000/api/products/" + ID)
 
     const KanapText = document.querySelector("#description");
     KanapText.innerText = product.description;
-    KanapContainer.appendChild(KanapText);
 
     const option = document.createElement("option");
     option.value = product.colors;

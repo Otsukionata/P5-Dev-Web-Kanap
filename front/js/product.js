@@ -11,8 +11,9 @@ console.log("Kanap, le Canap");
  * span#prix : prix
  * p.description
  * menu déroulant : couleurs
+ *  =>
  */
-const URL = new URLSearchParams(document.location.search);
+const URL = new URLSearchParams(window.location.search);
 const ID = URL.get("id");
 
 console.log(URL);
@@ -24,7 +25,6 @@ fetch("http://localhost:3000/api/products/" + ID)
     }
   })
   .then(function (product) {
-
     // Nom de la page
     const Title = document.querySelector("title");
     Title.innerText = product.name;
@@ -49,10 +49,16 @@ fetch("http://localhost:3000/api/products/" + ID)
     KanapText.innerText = product.description;
 
     // Choix de la couleur
-    const option = document.createElement("option");
-    option.value = product.colors;
-    option.innerText = product.colors;
-
     const KanapColor = document.querySelector("#colors");
-    KanapColor.appendChild(option);
+
+    // Pour chaque produit affiché, prendre sa couleur affectée en api l'injecter dans select => option
+    const Colors = product.colors;
+    console.log(Colors);
+    for (let i = 0; i < Colors.length; i++) {
+      const color = Colors[i];
+      const option = document.createElement("option");
+      option.value = color[i].value;
+      option.innerText = color[i].value;
+    }
+    KanapColor.appendChild(Colors);
   });

@@ -24,21 +24,31 @@ fetch("http://localhost:3000/api/products/" + ID)
     }
   })
   .then(function (product) {
+
+    // Nom de la page
+    const Title = document.querySelector("title");
+    Title.innerText = product.name;
+
+    // Image
     const Image = document.createElement("img");
     Image.src = product.imageUrl;
     Image.alt = product.altTxt;
     const KanapImg = document.querySelector(".item__img");
     KanapImg.appendChild(Image);
 
+    // Nom du produit : h1
     const KanapName = document.querySelector("#title");
     KanapName.innerText = product.name;
 
+    // Prix
     const KanapPrice = document.querySelector("#price");
     KanapPrice.innerText = product.price;
 
+    // Description
     const KanapText = document.querySelector("#description");
     KanapText.innerText = product.description;
 
+    // Choix de la couleur
     const option = document.createElement("option");
     option.value = product.colors;
     option.innerText = product.colors;

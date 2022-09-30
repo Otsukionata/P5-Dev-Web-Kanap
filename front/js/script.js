@@ -3,7 +3,6 @@
 async function getProducts() {
   const Response = await fetch("http://localhost:3000/api/products");
   const Products = await Response.json();
-  // console.log(Products);
   createProduct(Products);
 }
 getProducts();
@@ -13,28 +12,30 @@ function createProduct(product) {
     // Balise récupérant les cartes dans le DOM
     const SectionCards = document.querySelector("#items");
 
+    // Lien vers le produit
     const Link = document.createElement("a");
     Link.href = "./product.html?id=" + product[i]._id;
     const Cards = document.createElement("article");
 
-    // Cards.dataset.id = product[i]._id;
-    //
-
+    // Image du canapé
     const ImgKanap = document.createElement("img");
     ImgKanap.src = product[i].imageUrl;
     ImgKanap.alt = product[i].altTxt;
     Cards.appendChild(ImgKanap);
 
+    // Nom de marque du canapé
     const NameKanap = document.createElement("h3");
     NameKanap.innerText = product[i].name;
     NameKanap.classList.add("productName");
     Cards.appendChild(NameKanap);
 
+    // Description
     const DescriptionKanap = document.createElement("p");
     DescriptionKanap.innerText = product[i].description;
     DescriptionKanap.classList.add("productDescription");
     Cards.appendChild(DescriptionKanap);
 
+    // Adoption des éléments précédents par leurs parents respectifs
     Link.appendChild(Cards);
     SectionCards.appendChild(Link);
   }

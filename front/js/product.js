@@ -54,11 +54,12 @@ fetch("http://localhost:3000/api/products/" + ID)
     // Pour chaque produit affiché, prendre sa couleur affectée en api l'injecter dans select => option
     const Colors = product.colors;
     console.log(Colors);
+
     for (let i = 0; i < Colors.length; i++) {
-      const color = Colors[i];
-      const option = document.createElement("option");
-      option.value = color[i].value;
-      option.innerText = color[i].value;
+      const option = Colors[i];
+      const element = document.createElement("option");
+      element.textContent = option;
+      element.value = option;
+      KanapColor.appendChild(element);
     }
-    KanapColor.appendChild(Colors);
   });

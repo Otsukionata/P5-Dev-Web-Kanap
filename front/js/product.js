@@ -59,7 +59,6 @@ fetch("http://localhost:3000/api/products/" + ID)
 
     // Pour chaque produit affiché, prendre ses couleurs disponibles dans l'api et les injecter dans select => option
     const Colors = product.colors;
-    console.log(Colors);
 
     // Ajout des options de couleur
     for (let i = 0; i < Colors.length; i++) {
@@ -73,16 +72,20 @@ fetch("http://localhost:3000/api/products/" + ID)
     console.log(KanapColor);
     // Activation du bouton
     const SendBtn = document.querySelector("#addToCart");
-    console.log(SendBtn);
 
     SendBtn.addEventListener("click", function () {
       const KanapQuantity = document.querySelector("#quantity").value;
       const ColorChoice = document.querySelector("#colors").value;
 
-      if (ColorChoice === "") {
+      // Gestion de la mise en panier
+
+      if (ColorChoice === "") {   //  Pour s'assurer qu'une couleur a été choisie
         alert("Veuillez choisir une couleur");
-      } else {
-        let productOptions = {
+      } else if (KanapQuantity == 0) {   //  Pour s'assurer qu'une quantité a été entrée
+        alert("Veuillez choisir une quantité");
+      } else {  //Si tout est bon :
+        // Création de l'objet contenant les informations à stocker dans le localStorage
+        let cart = {
           idProduct: ID,
           productName: product.name,
           productColor: ColorChoice,
@@ -91,26 +94,28 @@ fetch("http://localhost:3000/api/products/" + ID)
           productImage: product.imageUrl,
           altImg: product.altTxt,
           productTxt: product.description,
+        }; // Fin de l'objet à envoyer au panier
+
+        let saveInLocStorage = JSON.parse(localStorage.getItem("data"));
+
+        // fonction gérant l'ajout d'objet au local storage
+        const localSave = () => {
+          saveInLocStorage.push(cart);
+          localStorage.setItem("data", JSON.stringify(saveInLocStorage));
         };
-        // console.log(ColorChoice,KanapQuantity,productOptions);
-        function saveCart(productOptions) {
-          localStorage.setItem("cart", JSON.stringify(productOptions));
-          window.location.href = "./cart.html";
-          return productOptions;
+        console.log(localSave);
+
+        // Vérification de l'existence d'un objet dans le localStorage
+        if (saveInLocStorage) {
+          localSave();
+          alert("Votre produit a été ajouté au panier");
+        } else {
+          saveInLocStorage = [];
+          localSave();
+        }
+        // console.log(ColorChoice, KanapQuantity, cart);
+        // console.log(saveInLocStorage);
+
       }
-      }
-      saveCart(productOptions);
-    });
+    }); // Fin de l'eventlistener
   });
-
-
-/**
- * Selection de l'identifiant du menu déroulant
- * ajout de l'option d'envoi du choix de la couleur vers le panier
- * ajout du nombre d'articles
- *saveCart(productOptions)
- *
- * function saveCart(productOptions) {
-  localStorage.setItem("cart", JSON.stringify(productOptions));
-}
- */

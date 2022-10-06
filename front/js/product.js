@@ -103,12 +103,12 @@ fetch("http://localhost:3000/api/products/" + ID)
           saveInLocStorage.push(cart);
           localStorage.setItem("data", JSON.stringify(saveInLocStorage));
         };
-        console.log(localSave);
 
-        // Vérification de l'existence d'un objet dans le localStorage
+        // Vérification de l'existence d'un objet dans le localStorage. Si absent, création d'un tableau dans lequel sera stocké l'objet
         if (saveInLocStorage) {
           localSave();
           alert("Votre produit a été ajouté au panier");
+          window.location.href = "./cart.html";
         } else {
           saveInLocStorage = [];
           localSave();

@@ -3,7 +3,7 @@
 console.log("mon panier");
 
 // Récupération des données du localStorage
-let saveInLocStorage = JSON.parse(localStorage.getItem("data"));
+const saveInLocStorage = JSON.parse(localStorage.getItem("data"));
 
 // Vérification de l'existence de données dans le localStorage
 if (!localStorage.getItem("data")) {
@@ -21,6 +21,15 @@ if (!localStorage.getItem("data")) {
  *  - Supprimer un ou plusieurs articles
  *  - Vider le panier
  */
+
+//  1. Récupération et affichage des données
+
+
+const Article = document.createElement("article");
+Article.classList.add("cart__item");
+Article.dataset.id = saveInLocStorage.idProduct;
+Article.dataset.color = saveInLocStorage.productColor;
+console.log(Article);
 
 
 

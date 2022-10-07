@@ -79,11 +79,14 @@ fetch("http://localhost:3000/api/products/" + ID)
 
       // Gestion de la mise en panier
 
-      if (ColorChoice === "") {   //  Pour s'assurer qu'une couleur a été choisie
+      if (ColorChoice === "") {
+        //  Pour s'assurer qu'une couleur a été choisie
         alert("Veuillez choisir une couleur");
-      } else if (KanapQuantity == 0) {   //  Pour s'assurer qu'une quantité a été entrée
+      } else if (KanapQuantity == 0) {
+        //  Pour s'assurer qu'une quantité a été entrée
         alert("Veuillez choisir une quantité");
-      } else {  //Si tout est bon :
+      } else {
+        //Si tout est bon :
         // Création de l'objet contenant les informations à stocker dans le localStorage
         let cart = {
           idProduct: ID,
@@ -93,29 +96,11 @@ fetch("http://localhost:3000/api/products/" + ID)
           productQuantity: Number(KanapQuantity),
           productImage: product.imageUrl,
           altImg: product.altTxt,
-          productTxt: product.description,
         }; // Fin de l'objet à envoyer au panier
 
-        let saveInLocStorage = JSON.parse(localStorage.getItem("data"));
-
-        // fonction gérant l'ajout d'objet au local storage
-        const localSave = () => {
-          saveInLocStorage.push(cart);
-          localStorage.setItem("data", JSON.stringify(saveInLocStorage));
-        };
-
-        // Vérification de l'existence d'un objet dans le localStorage. Si absent, création d'un tableau dans lequel sera stocké l'objet
-        if (saveInLocStorage) {
-          localSave();
-          alert("Votre produit a été ajouté au panier");
-          window.location.href = "./cart.html";
-        } else {
-          saveInLocStorage = [];
-          localSave();
-        }
-        // console.log(ColorChoice, KanapQuantity, cart);
-        // console.log(saveInLocStorage);
-
+        localStorage.setItem(ID, JSON.stringify(cart));
+        alert("Votre produit a été ajouté au panier");
+        window.location.href = "./cart.html";
       }
     }); // Fin de l'eventlistener
   });

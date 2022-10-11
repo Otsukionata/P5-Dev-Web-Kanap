@@ -39,7 +39,7 @@ for (let i = 0; i < localStorage.length; i++) {
 
     DisplayArticle.appendChild(DisplayImage);
     DisplayArticle.appendChild(DisplayDescription);
-    // DisplayArticle.appendChild(ContentSettings);
+    DisplayArticle.appendChild(ContentSettings);
   }
 
   function container(DisplayArticle) {
@@ -133,6 +133,7 @@ function settings(Key) {
 
   // DeleteDiv.appendChild(DeleteProduct);
   Settings.appendChild(ProductQuantity);
+  return Settings;
 }
 
 // // Le montant total du panier

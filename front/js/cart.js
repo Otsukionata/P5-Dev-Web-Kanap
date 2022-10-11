@@ -28,12 +28,20 @@ for (let i = 0; i < localStorage.length; i++) {
   function itemDisplay(Key) {
     const DisplayArticle = displayArticle(Key);
     container(DisplayArticle);
+
     const DisplayImage = displayImage(Key);
     const DisplayDescription = displayDescription(Key);
+    const ContentSettings = settings(Key);
+
+    console.log(ContentSettings);
+
     console.log(DisplayArticle);
+
     DisplayArticle.appendChild(DisplayImage);
     DisplayArticle.appendChild(DisplayDescription);
+    // DisplayArticle.appendChild(ContentSettings);
   }
+
   function container(DisplayArticle) {
     document.querySelector("#cart__items").appendChild(DisplayArticle);
   }
@@ -89,3 +97,49 @@ function displayDescription(Key) {
   Container.appendChild(ItemDescription);
   return Container;
 }
+
+// Changements au panier
+function settings(Key) {
+  const Settings = document.createElement("div");
+  Settings.classList.add("cart__item__content__settings");
+
+  // Les quantités
+  const ProductQuantity = document.createElement("div");
+  ProductQuantity.classList.add("cart__item__content__settings__quantity");
+
+  const QuantityNumber = document.createElement("p");
+  QuantityNumber.innerText = "Qté : " + Key.productQuantity;
+
+  ProductQuantity.appendChild(QuantityNumber);
+
+  // const QuantityChange = document.createElement("input");
+  // QuantityChange.setAttribute("type", "number");
+  // QuantityChange.classList.add("itemQuantity");
+  // QuantityChange.setAttribute("name", "itemQuantity");
+  // QuantityChange.setAttribute("min", "1");
+  // QuantityChange.setAttribute("max", "100");
+  // QuantityChange.setAttribute("value", "42");
+  // QuantityChange.setAttribute("aria-label", "Nombre d'articles");
+
+  // ProductQuantity.appendChild(QuantityChange);
+
+  // // La suppression
+  // const DeleteDiv = document.createElement("div");
+  // DeleteDiv.classList.add("cart__item__content__settings__delete");
+
+  // const DeleteProduct = document.createElement("p");
+  // DeleteProduct.classList.add("deleteItem");
+  // DeleteProduct.innerText = "Supprimer";
+
+  // DeleteDiv.appendChild(DeleteProduct);
+  Settings.appendChild(ProductQuantity);
+}
+
+// // Le montant total du panier
+// const TotalResults = document.querySelector(".cart__price");
+
+// const TotalQuantity = document.querySelector(".totalQuantity");
+// //  Ajouter la quantité totale d'articles du panier
+
+// const TotalPrice = document.querySelector("totalPrice");
+// // Ajouter le montant total du panier

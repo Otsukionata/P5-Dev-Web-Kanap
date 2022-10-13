@@ -91,13 +91,14 @@ fetch("http://localhost:3000/api/products/" + ID)
 
         // Création de l'objet contenant les informations à stocker dans le localStorage
         console.log(localStorage.getItem("cart"));
-        let Cart = [];
+        let cart = [];
 
         if (localStorage.getItem("cart")) {
-          Cart = JSON.parse(localStorage.getItem("cart"));
+          cart = JSON.parse(localStorage.getItem("cart"));
         }
-        console.log(Cart);
+        console.log(cart);
 
+        // Création de l'entrée pour chaque article ajouté au panier
         let product = {
           id: ID,
           name: data.name,
@@ -108,20 +109,21 @@ fetch("http://localhost:3000/api/products/" + ID)
           altImg: data.altTxt,
         }; // Fin de l'objet à envoyer au panier
 
-        let foundProduct = Cart.find(
-          (p) => p.color == Cart.color
-        );
-        if (foundProduct > 1) {
-          foundProduct += quantity; 
+        // Gestion de l'ajout de produits identiques
+        let foundProduct = cart.find((p) => p.color == product.color);
+        console.log(foundProduct.quantity);
+        
+        if (foundProduct != undefined) {
+          foundProduct.quantity += quantity;
         }
-        Cart.push(product);
+        console.log(foundProduct.quantity);
+        cart.push(product);
+        // Fin de gestion
 
-        localStorage.setItem("cart", JSON.stringify(Cart));
-
-        // addToCart(cart);
+        localStorage.setItem("cart", JSON.stringify(cart));
 
         alert("Votre produit a été ajouté au panier");
-        window.location.href = "./cart.html";
+        // window.location.href = "./cart.html";
       }
     }); // Fin de l'eventlistener
   });

@@ -110,20 +110,25 @@ fetch("http://localhost:3000/api/products/" + ID)
         }; // Fin de l'objet à envoyer au panier
 
         // Gestion de l'ajout de produits identiques
-        let foundProduct = cart.find((p) => p.color == product.color);
-        console.log(foundProduct.quantity);
-        
-        if (foundProduct != undefined) {
-          foundProduct.quantity += quantity;
+        let foundProduct = cart.find(
+          (p) =>
+            p.id === product.id &&
+            p.name === product.name &&
+            p.color === product.color
+        );
+        console.log(foundProduct);
+
+        if (foundProduct === undefined) {
+          cart.push(product);
+        } else {
+          foundProduct.quantity += product.quantity;
         }
-        console.log(foundProduct.quantity);
-        cart.push(product);
         // Fin de gestion
 
         localStorage.setItem("cart", JSON.stringify(cart));
 
         alert("Votre produit a été ajouté au panier");
-        // window.location.href = "./cart.html";
+        window.location.href = "./cart.html";
       }
     }); // Fin de l'eventlistener
   });

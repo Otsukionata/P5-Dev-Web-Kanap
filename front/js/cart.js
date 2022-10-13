@@ -1,4 +1,4 @@
-"use strict";
+// "use strict";
 console.log("Mon panier");
 
 // Vérification de l'existence de données dans le localStorage
@@ -33,13 +33,13 @@ for (let i = 0; i < localStorage.length; i++) {
     const DisplayDescription = displayDescription(Key);
     const ContentSettings = settings(Key);
 
-    console.log(ContentSettings);
-
-    console.log(DisplayArticle);
+    // console.log(ContentSettings);
 
     DisplayArticle.appendChild(DisplayImage);
     DisplayArticle.appendChild(DisplayDescription);
     DisplayArticle.appendChild(ContentSettings);
+
+    console.log(DisplayArticle);
   }
 
   function container(DisplayArticle) {
@@ -47,7 +47,19 @@ for (let i = 0; i < localStorage.length; i++) {
   }
 } // Fin de la boucle d'affichage
 
-console.log(Cart);
+// console.log(Cart);
+
+/**
+        let cart = [
+         0 ID,
+         1 H2,
+         2 ColorChoice,
+         3 Price,
+         4 Number(KanapQuantity),
+         5 Img,
+         6 Alt,
+        ]; // Fin de l'objet à envoyer au panier
+ */
 
 //  --------- Création de la balise article
 function displayArticle(Key) {
@@ -112,26 +124,26 @@ function settings(Key) {
 
   ProductQuantity.appendChild(QuantityNumber);
 
-  // const QuantityChange = document.createElement("input");
-  // QuantityChange.setAttribute("type", "number");
-  // QuantityChange.classList.add("itemQuantity");
-  // QuantityChange.setAttribute("name", "itemQuantity");
-  // QuantityChange.setAttribute("min", "1");
-  // QuantityChange.setAttribute("max", "100");
-  // QuantityChange.setAttribute("value", "42");
-  // QuantityChange.setAttribute("aria-label", "Nombre d'articles");
+  const QuantityChange = document.createElement("input");
+  QuantityChange.setAttribute("type", "number");
+  QuantityChange.classList.add("itemQuantity");
+  QuantityChange.setAttribute("name", "itemQuantity");
+  QuantityChange.setAttribute("min", "1");
+  QuantityChange.setAttribute("max", "100");
+  QuantityChange.setAttribute("value", Key.productQuantity);
+  QuantityChange.setAttribute("aria-label", "Nombre d'articles");
 
-  // ProductQuantity.appendChild(QuantityChange);
+  ProductQuantity.appendChild(QuantityChange);
 
-  // // La suppression
-  // const DeleteDiv = document.createElement("div");
-  // DeleteDiv.classList.add("cart__item__content__settings__delete");
+  // La suppression
+  const DeleteDiv = document.createElement("div");
+  DeleteDiv.classList.add("cart__item__content__settings__delete");
 
-  // const DeleteProduct = document.createElement("p");
-  // DeleteProduct.classList.add("deleteItem");
-  // DeleteProduct.innerText = "Supprimer";
+  const DeleteProduct = document.createElement("p");
+  DeleteProduct.classList.add("deleteItem");
+  DeleteProduct.innerText = "Supprimer";
 
-  // DeleteDiv.appendChild(DeleteProduct);
+  DeleteDiv.appendChild(DeleteProduct);
   Settings.appendChild(ProductQuantity);
   return Settings;
 }

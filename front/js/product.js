@@ -27,16 +27,16 @@ fetch("http://localhost:3000/api/products/" + ID)
       return response.json();
     }
   })
-  .then(function (product) {
+  .then(function (data) {
     // Affichage du nom de la page dans la balise Title pour l'onglet
     const Title = document.querySelector("title");
-    Title.innerText = product.name;
+    Title.innerText = data.name;
 
     // Affichage de l'image
     const Image = document.createElement("img");
-    Image.src = product.imageUrl;
+    Image.src = data.imageUrl;
     // Ne pas oublier la description de l'image
-    Image.alt = product.altTxt;
+    Image.alt = data.altTxt;
 
     // Ajout de l'image dans la balise correspondante
     const KanapImg = document.querySelector(".item__img");
@@ -44,21 +44,22 @@ fetch("http://localhost:3000/api/products/" + ID)
 
     // Affichage du nom de produit dans la balise h1
     const KanapName = document.querySelector("#title");
-    KanapName.innerText = product.name;
+    KanapName.innerText = data.name;
 
     // Insertion du Prix dans le span dédié
     const KanapPrice = document.querySelector("#price");
-    KanapPrice.innerText = product.price;
+    const Price = data.price;
+    KanapPrice.innerText = Price;
 
     // Description du produit
     const KanapText = document.querySelector("#description");
-    KanapText.innerText = product.description;
+    KanapText.innerText = data.description;
 
     // Choix de la couleur
     const KanapColor = document.querySelector("#colors");
 
     // Pour chaque produit affiché, prendre ses couleurs disponibles dans l'api et les injecter dans select => option
-    const Colors = product.colors;
+    const Colors = data.colors;
 
     // Ajout des options de couleur
     for (let i = 0; i < Colors.length; i++) {
@@ -69,7 +70,7 @@ fetch("http://localhost:3000/api/products/" + ID)
       KanapColor.appendChild(Element);
     }
 
-    console.log(KanapColor);
+    // console.log(KanapColor);
     // Activation du bouton
     const SendBtn = document.querySelector("#addToCart");
 
@@ -87,18 +88,38 @@ fetch("http://localhost:3000/api/products/" + ID)
         alert("Veuillez choisir une quantité");
       } else {
         //Si tout est bon :
+
         // Création de l'objet contenant les informations à stocker dans le localStorage
-        let cart = {
-          idProduct: ID,
-          productName: product.name,
-          productColor: ColorChoice,
-          productPrice: product.price,
-          productQuantity: Number(KanapQuantity),
-          productImage: product.imageUrl,
-          altImg: product.altTxt,
+        console.log(localStorage.getItem("cart"));
+        let Cart = [];
+
+        if (localStorage.getItem("cart")) {
+          Cart = JSON.parse(localStorage.getItem("cart"));
+        }
+        console.log(Cart);
+
+        let product = {
+          id: ID,
+          name: data.name,
+          color: ColorChoice,
+          price: data.price,
+          quantity: Number(KanapQuantity),
+          image: data.imageUrl,
+          altImg: data.altTxt,
         }; // Fin de l'objet à envoyer au panier
 
-        localStorage.setItem(ID, JSON.stringify(cart));
+        let foundProduct = Cart.find(
+          (p) => p.color == Cart.color
+        );
+        if (foundProduct > 1) {
+          foundProduct += quantity; 
+        }
+        Cart.push(product);
+
+        localStorage.setItem("cart", JSON.stringify(Cart));
+
+        // addToCart(cart);
+
         alert("Votre produit a été ajouté au panier");
         window.location.href = "./cart.html";
       }

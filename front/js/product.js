@@ -1,19 +1,6 @@
 "use scrict";
 console.log("Kanap, le Canap");
 
-// 1. Récupérer la balise contenant l'élément : /{product-ID} et Insérer le produit demandé : URLSearchParams ✅
-// 2. Insérer la catégorie correspondante (image, titre, prix, description, couleurs) =>
-/** Conteneur = section.item => article
- * image
- * h1 : nom du produit
- * span#prix : prix
- * p.description
- * menu déroulant : couleurs
- * ✅
- */
-// 3. Envoyer le choix clientèle au panier
-// ************************************************************************
-
 // 1. Affichage du produit choisi depuis la page d'accueil
 const URL = new URLSearchParams(window.location.search);
 const ID = URL.get("id");
@@ -96,7 +83,6 @@ fetch("http://localhost:3000/api/products/" + ID)
         if (localStorage.getItem("cart")) {
           cart = JSON.parse(localStorage.getItem("cart"));
         }
-        console.log(cart);
 
         // Création de l'entrée pour chaque article ajouté au panier
         let product = {
@@ -116,7 +102,6 @@ fetch("http://localhost:3000/api/products/" + ID)
             p.name === product.name &&
             p.color === product.color
         );
-        console.log(foundProduct);
 
         if (foundProduct === undefined) {
           cart.push(product);

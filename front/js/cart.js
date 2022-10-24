@@ -1,8 +1,11 @@
 "use strict";
 console.log("Mon panier");
 
+// Cacher le formulaire
+document.querySelector(".cart__order").style.display = "none";
+
 function getCart() {
-  //  1. Récupération et affichage des données du panier
+  //  1. Récupération et affichage des données du panier enregistré dans le LS
   let cart = localStorage.getItem("cart");
 
   // Ce qu'il se passe si le panier est rempli ou vide
@@ -13,9 +16,11 @@ function getCart() {
     return [];
   } else {
     console.log("Il y a des articles dans le panier !");
-    return JSON.parse(localStorage.getItem("cart"));
+    return JSON.parse(cart);
   }
 }
+
+let cart = getCart();
 
 //  Fonction de sauvegarde des modifications du panier
 function saveCart(data) {
@@ -23,10 +28,8 @@ function saveCart(data) {
 }
 
 // L'affichage des produits
-let cart = getCart();
-console.log(cart);
-
 cart.forEach((data) => itemDisplay(data));
+
 function itemDisplay(data) {
   const DisplayArticle = displayArticle(data);
   container(DisplayArticle);
@@ -43,13 +46,6 @@ function itemDisplay(data) {
 function container(DisplayArticle) {
   document.querySelector("#cart__items").appendChild(DisplayArticle);
 }
-// Affichage du nombre total de produit (fonction ligne 176)
-numberOfItems();
-
-// Affichage du montant total du panier (fonction ligne 186)
-cartPrice();
-
-// Fin de la fonction d'affichage
 
 //  --------- Création de la balise article
 function displayArticle(data) {
@@ -74,7 +70,7 @@ function displayImage(data) {
   return ImageDiv;
 }
 
-// Caractéristiques de chaque produit choisi : Nom, Couleur
+// Caractéristiques de chaque produit choisi : Nom, Couleur, Prix
 function displayDescription(data) {
   const Container = document.createElement("div");
   Container.classList.add("cart__item__content");
@@ -90,29 +86,36 @@ function displayDescription(data) {
   const ProductColor = document.createElement("p");
   ProductColor.innerText = data.color;
 
-  // Prix => (fonction ligne 107)
-  const ProductPrice = price(data);
+  // Extraction de l'id des articles du panier dans l'API
+  function getId(data) {
+    let id = data.id;
+    return id;
+  }
+
+  // Stockage des id et des conteneurs à créer dans le HTML dans des variables
+  const ID = getId(data);
+  const Price = document.createElement("p");
+
+  // Récupération et affichage du prix de chaque produit dans l'API via leurs id respectifs et calcul selon sa quantité
+  fetch("http://localhost:3000/api/products/" + ID)
+    .then((response) => response.json())
+    .then(function (p) {
+      let itemPrice = p.price;
+      itemPrice *= data.quantity;
+      Price.innerText = `${itemPrice}€`;
+    });
 
   // Rattachement de ces 3 élements à la div les contenant
   ItemDescription.appendChild(ProductName);
   ItemDescription.appendChild(ProductColor);
-  ItemDescription.appendChild(ProductPrice);
+  ItemDescription.appendChild(Price);
 
   // Ajout de la div "ItemDescription" à la fiche du produit
   Container.appendChild(ItemDescription);
   return Container;
 }
 
-// Affichage du prix
-function price(data) {
-  const ProductPrice = document.createElement("p");
-  let itemPrice = data.price;
-  itemPrice *= data.quantity;
-  ProductPrice.innerText = `${itemPrice}€`;
-  return ProductPrice;
-}
-
-// Les quantités et leur modification
+// Affichage des quantités et de leurs boutons associés
 function quantity(data) {
   const ProductQuantity = document.createElement("div");
   ProductQuantity.classList.add("cart__item__content__settings__quantity");
@@ -140,7 +143,6 @@ function quantityInput(data) {
   // Modification des quantités
   QuantityChange.addEventListener("change", function () {
     data.quantity = Number(this.value);
-
     saveCart(cart);
   });
   return QuantityChange;
@@ -158,15 +160,18 @@ function deleteItem() {
   DeleteBtn.appendChild(DeleteProduct);
 
   DeleteBtn.addEventListener("click", function () {
+    const Del = DeleteBtn.closest('article');
+    console.log(Del);
+
     let deleteItem = cart.filter(
-      (item) => cart.id !== item.id || cart.color !== item.color
+      (item) => Del.id !== item.id && Del.color !== item.color
     );
     console.log(deleteItem);
   });
   return DeleteBtn;
 }
 
-// Changements au panier
+// Rattachement des changements du panier (suppression, quantité) au HTML
 function settings(data) {
   const Settings = document.createElement("div");
   const Quantities = quantity(data);
@@ -182,6 +187,7 @@ function settings(data) {
 const TotalResults = document.querySelector(".cart__price");
 
 //  Ajouter la quantité totale d'articles du panier
+
 function numberOfItems() {
   const TotalQuantity = document.querySelector("#totalQuantity");
   let number = [];
@@ -192,14 +198,6 @@ function numberOfItems() {
   return TotalQuantity;
 }
 
-function cartPrice() {
-  const TotalPrice = document.querySelector("#totalPrice");
-  let total = [];
-  cart.forEach((sumPrice) => {
-    total.push(sumPrice.price * sumPrice.quantity);
-  });
-  console.log(total);
+numberOfItems();
 
-  TotalPrice.innerText = `${eval(total.join("+"))}` + ",00";
-  return TotalPrice;
-}
+// Fin de la fonction d'affichage

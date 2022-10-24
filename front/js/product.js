@@ -7,7 +7,7 @@ const ID = URL.get("id");
 
 console.log(URL);
 
-// 2. Ajout des caractéristiques ddu produit choisi
+// 2. Ajout des caractéristiques du produit choisi
 fetch("http://localhost:3000/api/products/" + ID)
   .then(function (response) {
     if (response.ok) {
@@ -89,7 +89,6 @@ fetch("http://localhost:3000/api/products/" + ID)
           id: ID,
           name: data.name,
           color: ColorChoice,
-          price: Number(data.price),
           quantity: Number(KanapQuantity),
           image: data.imageUrl,
           altImg: data.altTxt,

@@ -160,13 +160,11 @@ function deleteItem() {
   DeleteBtn.appendChild(DeleteProduct);
 
   DeleteBtn.addEventListener("click", function () {
-    const Del = DeleteBtn.closest('article');
+    const Del = DeleteBtn.closest("article");
     console.log(Del);
+    Del.remove();
 
-    let deleteItem = cart.filter(
-      (item) => Del.id !== item.id && Del.color !== item.color
-    );
-    console.log(deleteItem);
+    saveCart();
   });
   return DeleteBtn;
 }

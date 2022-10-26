@@ -93,6 +93,19 @@ function displayDescription(data) {
   }
 
   // Stockage des id et des conteneurs à créer dans le HTML dans des variables
+  const Price = priceSettings(getId, data);
+
+  // Rattachement de ces 3 élements à la div les contenant
+  ItemDescription.appendChild(ProductName);
+  ItemDescription.appendChild(ProductColor);
+  ItemDescription.appendChild(Price);
+
+  // Ajout de la div "ItemDescription" à la fiche du produit
+  Container.appendChild(ItemDescription);
+  return Container;
+}
+
+function priceSettings(getId, data) {
   const ID = getId(data);
   const Price = document.createElement("p");
 
@@ -104,15 +117,7 @@ function displayDescription(data) {
       itemPrice *= data.quantity;
       Price.innerText = `${itemPrice}€`;
     });
-
-  // Rattachement de ces 3 élements à la div les contenant
-  ItemDescription.appendChild(ProductName);
-  ItemDescription.appendChild(ProductColor);
-  ItemDescription.appendChild(Price);
-
-  // Ajout de la div "ItemDescription" à la fiche du produit
-  Container.appendChild(ItemDescription);
-  return Container;
+  return Price;
 }
 
 // Affichage des quantités et de leurs boutons associés
@@ -143,6 +148,8 @@ function quantityInput(data) {
   // Modification des quantités
   QuantityChange.addEventListener("change", function () {
     data.quantity = Number(this.value);
+    numberOfItems();
+
     saveCart(cart);
   });
   return QuantityChange;
@@ -161,8 +168,8 @@ function deleteItem() {
 
   DeleteBtn.addEventListener("click", function () {
     const Del = DeleteBtn.closest("article");
-    console.log(Del);
     Del.remove();
+    numberOfItems();
 
     saveCart();
   });

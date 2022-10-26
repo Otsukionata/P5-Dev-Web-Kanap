@@ -74,7 +74,6 @@ fetch("http://localhost:3000/api/products/" + ID)
         //  Pour s'assurer qu'une quantité a été entrée
         alert("Veuillez choisir une quantité");
       } else {
-        //Si tout est bon :
 
         // Création de l'objet contenant les informations à stocker dans le localStorage
         console.log(localStorage.getItem("cart"));

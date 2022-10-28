@@ -4,6 +4,10 @@ console.log("Mon panier");
 // Cacher le formulaire
 document.querySelector(".cart__order").style.display = "none";
 
+// Affichage du nom de la page dans la balise Title pour l'onglet
+const Title = document.querySelector("title");
+Title.innerText = "Panier";
+
 function getCart() {
   //  1. Récupération et affichage des données du panier enregistré dans le LS
   let cart = localStorage.getItem("cart");
@@ -49,30 +53,30 @@ function container(DisplayArticle) {
 }
 
 //  --------- Création de la balise article
-function displayArticle(data) {
+function displayArticle(product) {
   const Article = document.createElement("article");
   Article.classList.add("cart__item");
-  Article.dataset.id = data.id;
-  Article.dataset.color = data.color;
+  Article.dataset.id = product.id;
+  Article.dataset.color = product.color;
 
   return Article;
 }
 
 // Affichage de l'image avec sa description
-function displayImage(data) {
+function displayImage(product) {
   const ImageDiv = document.createElement("div");
   ImageDiv.classList.add("cart__item__img");
 
   const Image = document.createElement("img");
-  Image.src = data.image;
-  Image.alt = data.altImg;
+  Image.src = product.image;
+  Image.alt = product.altImg;
 
   ImageDiv.appendChild(Image);
   return ImageDiv;
 }
 
 // Caractéristiques de chaque produit choisi : Nom, Couleur, Prix
-function displayDescription(data) {
+function displayDescription(product) {
   const Container = document.createElement("div");
   Container.classList.add("cart__item__content");
 
@@ -81,14 +85,14 @@ function displayDescription(data) {
 
   // Nom du produit
   const ProductName = document.createElement("h2");
-  ProductName.innerText = data.name;
+  ProductName.innerText = product.name;
 
   // Couleur choisie
   const ProductColor = document.createElement("p");
-  ProductColor.innerText = data.color;
+  ProductColor.innerText = product.color;
 
   // Stockage en variables des id des articles et des conteneurs à créer dans le HTML
-  const Price = priceSettings(data);
+  const Price = priceSettings(product);
 
   // Rattachement de ces 3 élements à la div les contenant
   ItemDescription.appendChild(ProductName);
@@ -115,33 +119,33 @@ function priceSettings(data) {
 }
 
 // Affichage des quantités et de leurs boutons associés
-function quantity(data) {
+function quantity(product) {
   const ProductQuantity = document.createElement("div");
   ProductQuantity.classList.add("cart__item__content__settings__quantity");
 
-  const QuantityChange = quantityInput(data);
+  const QuantityChange = quantityInput(product);
 
   const QuantityNumber = document.createElement("p");
-  QuantityNumber.innerText = "Qté : " + data.quantity;
+  QuantityNumber.innerText = "Qté : " + product.quantity;
 
   ProductQuantity.appendChild(QuantityNumber);
   ProductQuantity.appendChild(QuantityChange);
   return ProductQuantity;
 }
 
-function quantityInput(data) {
+function quantityInput(product) {
   const QuantityChange = document.createElement("input");
   QuantityChange.setAttribute("type", "number");
   QuantityChange.classList.add("itemQuantity");
   QuantityChange.setAttribute("name", "itemQuantity");
   QuantityChange.setAttribute("min", "1");
   QuantityChange.setAttribute("max", "100");
-  QuantityChange.setAttribute("value", data.quantity);
+  QuantityChange.setAttribute("value", product.quantity);
   QuantityChange.setAttribute("aria-label", "Nombre d'articles");
 
   // Modification des quantités
   QuantityChange.addEventListener("change", function () {
-    data.quantity = Number(this.value);
+    product.quantity = Number(this.value);
 
     numberOfItems();
     saveCart(cart);
@@ -152,7 +156,7 @@ function quantityInput(data) {
 }
 
 // La suppression d'articles
-function deleteItem() {
+function deleteProduct() {
   const DeleteBtn = document.createElement("div");
   DeleteBtn.classList.add("cart__item__content__settings__delete");
 
@@ -163,12 +167,21 @@ function deleteItem() {
   DeleteBtn.appendChild(DeleteProduct);
 
   DeleteBtn.addEventListener("click", function () {
-    const Del = DeleteBtn.closest("article");
-    Del.remove();
-    numberOfItems();
+    let deleteProduct = DeleteBtn.closest("article");
+    let cart = JSON.parse(localStorage.getItem("cart"));
 
-    console.log(cart);
-    // saveCart();
+    let updateLocalStorage = cart.filter(
+      (element) =>
+        element.id !== deleteProduct.dataset.id ||
+        element.color !== deleteProduct.dataset.color
+    );
+
+    localStorage.setItem("cart", JSON.stringify(updateLocalStorage));
+
+    alert("Ce produit va être supprimé du panier.");
+
+    deleteProduct.remove();
+    numberOfItems();
   });
   return DeleteBtn;
 }
@@ -177,7 +190,7 @@ function deleteItem() {
 function settings(data) {
   const Settings = document.createElement("div");
   const Quantities = quantity(data);
-  const DeleteProduct = deleteItem();
+  const DeleteProduct = deleteProduct();
   Settings.classList.add("cart__item__content__settings");
 
   Settings.appendChild(Quantities);

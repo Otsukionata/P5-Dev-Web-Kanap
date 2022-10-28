@@ -146,7 +146,7 @@ function quantityInput(data) {
     numberOfItems();
     saveCart(cart);
 
-    document.location.reload;
+    window.location.reload(true);
   });
   return QuantityChange;
 }
@@ -167,7 +167,8 @@ function deleteItem() {
     Del.remove();
     numberOfItems();
 
-    saveCart();
+    console.log(cart);
+    // saveCart();
   });
   return DeleteBtn;
 }

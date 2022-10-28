@@ -20,7 +20,7 @@ function getCart() {
     return [];
   } else {
     console.log("Il y a des articles dans le panier !");
-    console.log(cart);
+    // console.log(cart);
 
     return JSON.parse(cart);
   }
@@ -114,7 +114,18 @@ function priceSettings(data) {
     .then(function (p) {
       let productPrice = p.price;
       Price.innerText = `${productPrice}€`;
+
+      // Le montant total du panier
+      const TotalPrice = document.querySelector("#totalPrice");
+      let total = [];
+      cart.forEach((sumPrice) => {
+        total.push(productPrice * sumPrice.quantity);
+      });
+
+      TotalPrice.innerText = `${eval(total.join("+"))}` + ",00";
+      return TotalPrice;
     });
+
   return Price;
 }
 
@@ -198,11 +209,7 @@ function settings(data) {
   return Settings;
 }
 
-// // Le montant total du panier
-const TotalResults = document.querySelector(".cart__price");
-
-//  Ajouter la quantité totale d'articles du panier
-
+//  Afficher la quantité totale d'articles du panier
 function numberOfItems() {
   const TotalQuantity = document.querySelector("#totalQuantity");
   let number = [];
@@ -216,3 +223,12 @@ function numberOfItems() {
 numberOfItems();
 
 // Fin de la fonction d'affichage
+
+// Gestion du formulaire
+
+/**
+ *   const validEmail = function (inputEmail) {
+  let emailRegExp = new RegExp(
+      /^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/
+    )};
+ */

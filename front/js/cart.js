@@ -9,17 +9,18 @@ function getCart() {
   let cart = localStorage.getItem("cart");
 
   // Ce qu'il se passe si le panier est rempli ou vide
-  if (cart == null) {
+  if (cart === null) {
     let emptyCart = document.querySelector("#cart__items");
     emptyCart.innerText = "Votre panier est vide";
     console.log("Panier vide");
     return [];
   } else {
     console.log("Il y a des articles dans le panier !");
+    console.log(cart);
+
     return JSON.parse(cart);
   }
 }
-
 let cart = getCart();
 
 //  Fonction de sauvegarde des modifications du panier
@@ -28,9 +29,9 @@ function saveCart(data) {
 }
 
 // L'affichage des produits
-cart.forEach((data) => itemDisplay(data));
+cart.forEach((data) => productDisplay(data));
 
-function itemDisplay(data) {
+function productDisplay(data) {
   const DisplayArticle = displayArticle(data);
   container(DisplayArticle);
 
@@ -86,14 +87,8 @@ function displayDescription(data) {
   const ProductColor = document.createElement("p");
   ProductColor.innerText = data.color;
 
-  // Extraction de l'id des articles du panier dans l'API
-  function getId(data) {
-    let id = data.id;
-    return id;
-  }
-
-  // Stockage des id et des conteneurs à créer dans le HTML dans des variables
-  const Price = priceSettings(getId, data);
+  // Stockage en variables des id des articles et des conteneurs à créer dans le HTML
+  const Price = priceSettings(data);
 
   // Rattachement de ces 3 élements à la div les contenant
   ItemDescription.appendChild(ProductName);
@@ -105,17 +100,16 @@ function displayDescription(data) {
   return Container;
 }
 
-function priceSettings(getId, data) {
-  const ID = getId(data);
+function priceSettings(data) {
+  const ID = data.id;
   const Price = document.createElement("p");
 
   // Récupération et affichage du prix de chaque produit dans l'API via leurs id respectifs et calcul selon sa quantité
   fetch("http://localhost:3000/api/products/" + ID)
     .then((response) => response.json())
     .then(function (p) {
-      let itemPrice = p.price;
-      itemPrice *= data.quantity;
-      Price.innerText = `${itemPrice}€`;
+      let productPrice = p.price;
+      Price.innerText = `${productPrice}€`;
     });
   return Price;
 }
@@ -148,9 +142,11 @@ function quantityInput(data) {
   // Modification des quantités
   QuantityChange.addEventListener("change", function () {
     data.quantity = Number(this.value);
-    numberOfItems();
 
+    numberOfItems();
     saveCart(cart);
+
+    document.location.reload;
   });
   return QuantityChange;
 }

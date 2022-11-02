@@ -372,38 +372,6 @@ SubmitBtn.addEventListener("click", function (e) {
     email: mailInput,
   };
 
-  switch (client) {
-    case "firstName":
-    case "lastName":
-    case "address":
-    case "city":
-    case "email":
-      console.log(client);
-      contact.push(client);
-      console.log(contact);
-      break;
-
-    default:
-      e.preventDefault();
-      console.log("Erreur formulaire");
-      break;
-  }
-
-  // const Order = {
-  //   cart,
-  //   contact
-  // }
-
-  // if (forenameInput == 0) {
-  //   e.preventDefault();
-  //   console.log("Erreur formulaire");
-  // } else if (surnameInput == 0) {
-  //   console.log("Erreur formulaire");
-  // } else if (addressInput == 0) {
-  //   console.log("Erreur formulaire");
-  // } else {
-  //   contact.push(client);
-  // }
 
   localStorage.setItem("client", JSON.stringify(contact));
 }); // Fin de l'eventlistener

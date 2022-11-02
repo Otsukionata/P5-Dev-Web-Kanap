@@ -49,7 +49,6 @@ function priceSettings(data) {
   return Price;
 }
 
-
 //  =====================  Fonction de sauvegarde des modifications du panier
 function saveCart(data) {
   localStorage.setItem("cart", JSON.stringify(data));
@@ -133,7 +132,6 @@ function displayDescription(product) {
   Container.appendChild(ItemDescription);
   return Container;
 }
-
 
 // Affichage des quantités et de leurs boutons associés
 function quantity(product) {
@@ -301,17 +299,14 @@ address.addEventListener("input", function (event) {
     addressInput = null;
     addressErrMsg.innerText = "Veuillez entrer votre ville";
     console.log("Champs vide", addressInput);
-  } else if (event.target.value.length < 1 || event.target.value.length > 42) {
-    addressErrMsg.innerText = "La ville doit avoir entre 1 et 45 caractères";
-    addressInput = null;
-  }
-  if (event.target.value.match(/^[0-9][a-x] [a-z A-Z À-ÿ - 0-9]$/)) {
+  } if (event.target.value.match(/^[0-9][a-x] [a-z A-Z À-ÿ - 0-9]$/)) {
     addressErrMsg.innerText = "";
     addressInput = event.target.value;
     console.log("Champs non vide", addressInput);
   }
 });
 
+// Nom de ville le plus court : "Y", nom le plus long : "Saint-Remy-en-Bouzemont-Saint-Genest-et-Isson"
 city.addEventListener("input", function (event) {
   console.log(city);
   cityInput;
@@ -371,7 +366,6 @@ SubmitBtn.addEventListener("click", function (e) {
     city: cityInput,
     email: mailInput,
   };
-
 
   localStorage.setItem("client", JSON.stringify(contact));
 }); // Fin de l'eventlistener

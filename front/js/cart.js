@@ -13,6 +13,9 @@ function getCart() {
   if (cart === null) {
     let emptyCart = document.querySelector("#cart__items");
     emptyCart.innerText = "Votre panier est vide";
+    // Cacher le formulaire
+    document.querySelector(".cart__order").style.display = "none";
+
     console.log("Panier vide");
     return [];
   } else {
@@ -21,6 +24,7 @@ function getCart() {
     return JSON.parse(cart);
   }
 }
+
 let cart = getCart();
 
 // =====================  Récupération et affichage des prix de chaque produit via l'API
@@ -43,10 +47,8 @@ function priceSettings(data) {
       });
 
       TotalPrice.innerText = `${eval(total.join("+"))}` + ",00";
-      return TotalPrice;
+      return { TotalPrice, Price };
     });
-
-  return Price;
 }
 
 //  =====================  Fonction de sauvegarde des modifications du panier
@@ -54,16 +56,14 @@ function saveCart(data) {
   localStorage.setItem("cart", JSON.stringify(data));
 }
 
-// let cartCopy = [];
+let cartCopy = [];
 
-// console.log(cart);
-// // =====================  L'affichage des produits
-// cart.forEach((data) => {
-//   data.price = priceSettings(data);
-//   cartCopy.push(data);
-// });
-
-// console.log(cartCopy);
+// =====================  L'affichage des produits
+cart.forEach((data) => {
+  productDisplay(data);
+  data.price = priceSettings(data);
+  cartCopy.push(data);
+});
 
 function productDisplay(data) {
   const DisplayArticle = displayArticle(data);
@@ -121,12 +121,12 @@ function displayDescription(product) {
   const ProductColor = document.createElement("p");
   ProductColor.innerText = product.color;
 
-  const Price = document.createElement("p");
+  // const ProductPrice = priceSettings(product).Price;
 
   // Rattachement de ces 3 élements à la div les contenant
   ItemDescription.appendChild(ProductName);
   ItemDescription.appendChild(ProductColor);
-  ItemDescription.appendChild(Price);
+  // ItemDescription.appendChild(ProductPrice);
 
   // Ajout de la div "ItemDescription" à la fiche du produit
   Container.appendChild(ItemDescription);
@@ -225,147 +225,135 @@ function numberOfItems() {
 }
 
 numberOfItems();
-
 // Fin de la fonction d'affichage
 
 // =====================  Gestion du formulaire
 const SubmitBtn = document.querySelector(".cart__order__form__submit");
 
-/**
- *   if (localStorage.getItem("client")) {
-    cart = JSON.parse(localStorage.getItem("client"));
-  }
- */
+// L'expression régulière pour les nom et prénom
+const RegExIdentity = (name) => {
+  return /^[a-z A-Z  À-ÿ ōŌ -]{2,55}$/.test(name);
+};
 
-let forename = document.querySelector("#firstName");
-let surname = document.querySelector("#lastName");
-let address = document.querySelector("#address");
-let city = document.querySelector("#city");
-let mail = document.querySelector("#email");
-
-let forenameErrMsg = document.querySelector("#firstNameErrorMsg");
-let surnameErrMsg = document.querySelector("#lastNameErrorMsg");
-let addressErrMsg = document.querySelector("#addressErrorMsg");
-let cityErrMsg = document.querySelector("#cityErrorMsg");
-let mailErrMsg = document.querySelector("#emailErrorMsg");
-
-let forenameInput, surnameInput, addressInput, cityInput, mailInput;
-
-forename.addEventListener("input", function (event) {
-  console.log(forename);
-  forenameInput;
-  if (event.target.value.length <= 1) {
-    forenameInput = null;
-    forenameErrMsg.innerText = "Veuillez entrer votre prénom";
-    console.log("Champs vide", forenameInput);
-  } else if (event.target.value.length < 2 || event.target.value.length > 25) {
-    forenameErrMsg.innerText = "Le prénom doit avoir entre 2 et 25 caractères";
-    forenameInput = null;
-  }
-  if (event.target.value.match(/^[a-z A-Z À-ÿ-]{2,25}$/u)) {
-    forenameErrMsg.innerText = "";
-    forenameInput = event.target.value;
-    console.log("Champs non vide", forenameInput);
-  } else {
-    console.log("Veuillez entrer votre prénom");
-    forenameErrMsg.innerText = "Veuillez entrer un prénom valide";
-  }
-});
-
-surname.addEventListener("input", function (event) {
-  console.log(surname);
-  surnameInput;
-  if (event.target.value.length <= 1) {
-    surnameInput = null;
-    surnameErrMsg.innerText = "Veuillez entrer votre nom";
-    console.log("Champs vide", surnameInput);
-  } else if (event.target.value.length < 2 || event.target.value.length > 25) {
-    surnameErrMsg.innerText = "Le nom doit avoir entre 2 et 25 caractères";
-    surnameInput = null;
-  }
-  if (event.target.value.match(/^[a-z A-Z  À-ÿ -]{2,25}$/)) {
-    surnameErrMsg.innerText = "";
-    surnameInput = event.target.value;
-    console.log("Champs non vide", surnameInput);
-  } else {
-    surnameErrMsg.innerText = "Veuillez entrer un nom valide";
-  }
-});
-
-address.addEventListener("input", function (event) {
-  console.log(address);
-  addressInput;
-  if (event.target.value.length == 0) {
-    addressInput = null;
-    addressErrMsg.innerText = "Veuillez entrer votre ville";
-    console.log("Champs vide", addressInput);
-  } if (event.target.value.match(/^[0-9][a-x] [a-z A-Z À-ÿ - 0-9]$/)) {
-    addressErrMsg.innerText = "";
-    addressInput = event.target.value;
-    console.log("Champs non vide", addressInput);
-  }
-});
-
-// Nom de ville le plus court : "Y", nom le plus long : "Saint-Remy-en-Bouzemont-Saint-Genest-et-Isson"
-city.addEventListener("input", function (event) {
-  console.log(city);
-  cityInput;
-  if (event.target.value.length == 0) {
-    cityInput = null;
-    cityErrMsg.innerText = "Veuillez entrer votre ville";
-    console.log("Champs vide", cityInput);
-  } else if (event.target.value.length < 1 || event.target.value.length > 42) {
-    cityErrMsg.innerText = "La ville doit avoir entre 1 et 45 caractères";
-    cityInput = null;
-  }
-  if (event.target.value.match(/^[a-z A-Z À-ÿ -]{1,45}$/)) {
-    cityErrMsg.innerText = "";
-    cityInput = event.target.value;
-    console.log("Champs non vide", cityInput);
-  } else {
-    cityErrMsg.innerText = "Veuillez entrer un nom de ville valide";
-  }
-});
-
-mail.addEventListener("input", function (event) {
-  console.log(mail);
-  mailInput;
-  if (event.target.value.length == 0) {
-    mailInput = null;
-    mailErrMsg.innerText = "Veuillez entrer votre adresse mail";
-    console.log("Champs vide", mailInput);
-  } else if (event.target.value.length < 1 || event.target.value.length > 64) {
-    mailErrMsg.innerText = "Adresse mail invalide";
-    mailInput = null;
-  }
-  if (
-    event.target.value.match(
-      /^[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$/
-    )
-  ) {
-    mailErrMsg.innerText = "";
-    mailInput = event.target.value;
-    console.log("Champs non vide", mailInput);
-  } else {
-    console.log("Veuillez entrer une adresse mail valide", mailInput);
-    mailErrMsg.innerText = "Adresse mail invalide";
-  }
-});
-
+// *** Soumission du formulaire ***
 SubmitBtn.addEventListener("click", function (e) {
-  // Gestion de la mise en LS
-  let contact = [];
+  console.log("click !");
+  e.preventDefault();
 
-  // Création de l'objet contenant les informations à stocker dans le localStorage
-  console.log(localStorage.getItem("client"));
-  // Création de l'entrée client
-  let client = {
-    firstName: forenameInput,
-    lastName: surnameInput,
-    address: addressInput,
-    city: cityInput,
-    email: mailInput,
+  // L'objet "contact" à envoyer au local storage et au back pour terminer la commande
+  const contact = {
+    firstName: document.querySelector("#firstName").value,
+    lastName: document.querySelector("#lastName").value,
+    address: document.querySelector("#address").value,
+    city: document.querySelector("#city").value,
+    email: document.querySelector("#email").value,
   };
 
-  localStorage.setItem("client", JSON.stringify(contact));
-}); // Fin de l'eventlistener
+  // *** Contrôle du formulaire ***
+
+  let forenameErrMsg = document.querySelector("#firstNameErrorMsg");
+  let surnameErrMsg = document.querySelector("#lastNameErrorMsg");
+  let addressErrMsg = document.querySelector("#addressErrorMsg");
+  let cityErrMsg = document.querySelector("#cityErrorMsg");
+  let mailErrMsg = document.querySelector("#emailErrorMsg");
+
+  function forenameControl() {
+    const Forename = contact.firstName;
+    if (RegExIdentity(Forename)) {
+      forenameErrMsg.innerText = "";
+      return true;
+    } else {
+      forenameErrMsg.innerText = "Veuillez entrer un prénom valide";
+      return false;
+    }
+  }
+
+  // Nom de famille le plus long : "Pourroy de L’Auberivière de Quinsonas-Oudinot de Reggio"
+  function lastnameControl() {
+    const Surname = contact.lastName;
+    if (RegExIdentity(Surname)) {
+      surnameErrMsg.innerText = "";
+      return true;
+    } else {
+      surnameErrMsg.innerText = "Veuillez entrer un nom valide";
+      return false;
+    }
+  }
+
+  function addressControl() {
+    const Address = contact.address;
+    if (
+      /^(\d+)?\,?\s?(a-x)?\,?\s?(a-x)?\s([a-zA-Zà-ÿ0-9\s]{2,})+$/gi.test(
+        Address
+      )
+    ) {
+      addressErrMsg.innerText = "";
+      return true;
+    } else {
+      addressErrMsg.innerText = "Veuillez entrer une adresse valide";
+      return false;
+    }
+  }
+
+  // Nom de ville française le plus court : "Y", nom le plus long : "Saint-Remy-en-Bouzemont-Saint-Genest-et-Isson"
+  function cityControl() {
+    const City = contact.city;
+    if (/^[a-z A-Z À-ÿ -]{1,45}$/.test(City)) {
+      cityErrMsg.innerText = "";
+      return true;
+    } else {
+      cityErrMsg.innerText = "Veuillez entrer un nom de ville valide";
+      return false;
+    }
+  }
+
+  function mailControl() {
+    const Email = contact.email;
+    if (
+      /^[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$/.test(
+        Email
+      )
+    ) {
+      mailErrMsg.innerText = "";
+      return true;
+    } else {
+      mailErrMsg.innerText = "Veuillez entrer une adresse mail valide";
+      return false;
+    }
+  }
+
+  // *** Vérification et envoi du formulaire validé ***
+  if (
+    forenameControl() &&
+    lastnameControl() &&
+    addressControl() &&
+    cityControl() &&
+    mailControl()
+  ) {
+    localStorage.setItem("client", JSON.stringify(contact));
+  } else {
+    alert("Erreur formulaire. Veuillez vérifier les champs indiqués.");
+  }
+
+  const products = getCart();
+  const Order = {
+    products,
+    contact,
+  };
+  console.log("Commande : " + Order);
+});
+
+// *** Récupération d'éventuelles données de client existantes ***
+
+const ExistingContact = JSON.parse(localStorage.getItem("client"));
+
+// Fonction de remplissage des champs avec les données trouvées
+function ClientFromLS(input) {
+  document.querySelector(`#${input}`).value = ExistingContact[input];
+}
+
+ClientFromLS("firstName");
+ClientFromLS("lastName");
+ClientFromLS("address");
+ClientFromLS("city");
+ClientFromLS("email");

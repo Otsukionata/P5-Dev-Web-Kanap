@@ -1,4 +1,5 @@
 "use strict";
+
 console.log("Mon panier");
 
 // =====================  Affichage du nom de la page dans la balise Title pour l'onglet
@@ -335,25 +336,38 @@ SubmitBtn.addEventListener("click", function (e) {
     alert("Erreur formulaire. Veuillez vérifier les champs indiqués.");
   }
 
-  const products = getCart();
+  let products = [];
+  cart.forEach((item) => {
+    products.push(item.id);
+  });
+
   const Order = {
     products,
     contact,
   };
-  console.log("Commande : " + Order);
+
+  // Envoi au serveur
+  fetch("http://localhost:3000/api/products/order", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(Order),
+  });
 });
 
-// *** Récupération d'éventuelles données de client existantes ***
-
-const ExistingContact = JSON.parse(localStorage.getItem("client"));
-
-// Fonction de remplissage des champs avec les données trouvées
-function ClientFromLS(input) {
-  document.querySelector(`#${input}`).value = ExistingContact[input];
-}
-
-ClientFromLS("firstName");
-ClientFromLS("lastName");
-ClientFromLS("address");
-ClientFromLS("city");
-ClientFromLS("email");
+// // *** Récupération d'éventuelles données de client existantes ***
+// const ExistingContact = JSON.parse(localStorage.getItem("client"));
+// if (ExistingContact) {
+//   // Remplissage des champs avec les données trouvées
+//   function ClientFromLS(input) {
+//     document.querySelector(`#${input}`).value = ExistingContact[input];
+//   }
+//   ClientFromLS("firstName");
+//   ClientFromLS("lastName");
+//   ClientFromLS("address");
+//   ClientFromLS("city");
+//   ClientFromLS("email");
+// } else {
+//   console.log("Création fichier client");
+// }

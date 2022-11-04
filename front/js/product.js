@@ -57,7 +57,6 @@ fetch("http://localhost:3000/api/products/" + ID)
       KanapColor.appendChild(Element);
     }
 
-    // console.log(KanapColor);
     // Activation du bouton
     const SendBtn = document.querySelector("#addToCart");
 
@@ -76,7 +75,6 @@ fetch("http://localhost:3000/api/products/" + ID)
       } else {
 
         // Création de l'objet contenant les informations à stocker dans le localStorage
-        console.log(localStorage.getItem("cart"));
         let cart = [];
 
         if (localStorage.getItem("cart")) {

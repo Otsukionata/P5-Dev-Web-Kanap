@@ -1,5 +1,4 @@
 "use strict";
-
 console.log("Mon panier");
 
 // =====================  Affichage du nom de la page dans la balise Title pour l'onglet
@@ -16,12 +15,8 @@ function getCart() {
     emptyCart.innerText = "Votre panier est vide";
     // Cacher le formulaire
     document.querySelector(".cart__order").style.display = "none";
-
-    console.log("Panier vide");
     return [];
   } else {
-    console.log("Il y a des articles dans le panier !");
-
     return JSON.parse(cart);
   }
 }
@@ -238,8 +233,6 @@ const RegExIdentity = (name) => {
 
 // *** Soumission du formulaire ***
 SubmitBtn.addEventListener("click", function (e) {
-  console.log("click !");
-  e.preventDefault();
 
   // L'objet "contact" à envoyer au local storage et au back pour terminer la commande
   const contact = {
@@ -346,28 +339,37 @@ SubmitBtn.addEventListener("click", function (e) {
     contact,
   };
 
-  // Envoi au serveur
+  // ===================== Envoi au serveur
   fetch("http://localhost:3000/api/products/order", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
     },
+
     body: JSON.stringify(Order),
-  });
+  })
+    .then(function (response) {
+      const Response = response.json();
+      return Response;
+    })
+    .then(function (json) {
+      const ID = json.orderId;
+      window.location = `./confirmation.html?id=${ID}`;
+    });
 });
 
-// // *** Récupération d'éventuelles données de client existantes ***
-// const ExistingContact = JSON.parse(localStorage.getItem("client"));
-// if (ExistingContact) {
-//   // Remplissage des champs avec les données trouvées
-//   function ClientFromLS(input) {
-//     document.querySelector(`#${input}`).value = ExistingContact[input];
-//   }
-//   ClientFromLS("firstName");
-//   ClientFromLS("lastName");
-//   ClientFromLS("address");
-//   ClientFromLS("city");
-//   ClientFromLS("email");
-// } else {
-//   console.log("Création fichier client");
-// }
+// *** Récupération d'éventuelles données de client existantes ***
+const ExistingContact = JSON.parse(localStorage.getItem("client"));
+if (ExistingContact) {
+  // Remplissage des champs avec les données trouvées
+  function ClientFromLS(input) {
+    document.querySelector(`#${input}`).value = ExistingContact[input];
+  }
+  ClientFromLS("firstName");
+  ClientFromLS("lastName");
+  ClientFromLS("address");
+  ClientFromLS("city");
+  ClientFromLS("email");
+} else {
+  console.log("Création fichier client");
+}

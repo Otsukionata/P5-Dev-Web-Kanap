@@ -20,22 +20,25 @@ function getCart() {
   }
 }
 
-async function getproductFromApi(data) {
-  const DataFetch = await fetch("http://localhost:3000/api/products/" + data.id)
+function getPriceFromApi(data) {
+  const DataFetch = fetch("http://localhost:3000/api/products/" + data.id)
     .then((response) => response.json())
     .then((item) => {
-      return item;
+      return item.price;
     });
 
-  productDisplay(data);
+  productDisplay(DataFetch);
   console.log(DataFetch);
   return DataFetch;
 }
 
-function completeCart() {
+let cartWithPrices = [];
+
+async function completeCart() {
   let cart = getCart();
-  cart.forEach((item) => {
-    getproductFromApi(item);
+  console.log(cart);
+  cart.forEach(async (item) => {
+    await getPriceFromApi(item);
   });
 }
 
@@ -51,14 +54,18 @@ function container(DisplayArticle) {
   document.querySelector("#cart__items").appendChild(DisplayArticle);
 }
 
-function productDisplay(data) {
-  //Mettre "cart copy" à la place de "data" et mettre toutes les fonctions de creation de la page
-  const DisplayArticle = displayArticle(data);
+// cart.forEach((data) => {
+//   productDisplay(data);
+// });
+
+function productDisplay(product) {
+  //Mettre "cart copy" à la place de "product" et mettre toutes les fonctions de creation de la page
+  const DisplayArticle = displayArticle(product);
   container(DisplayArticle);
 
-  const DisplayImage = displayImage(data);
-  const DisplayDescription = displayDescription(data);
-  const DisplaySettings = settings(data);
+  const DisplayImage = displayImage(product);
+  const DisplayDescription = displayDescription(product);
+  const DisplaySettings = settings(product);
 
   DisplayArticle.appendChild(DisplayImage);
   DisplayArticle.appendChild(DisplayDescription);
@@ -83,40 +90,52 @@ function displayImage(product) {
   ImageDiv.classList.add("cart__item__img");
 
   const Image = document.createElement("img");
-  Image.src = product.image;
-  Image.alt = product.altImg;
+  Image.src = product.imageUrl;
+  Image.altTxt = product.altImg;
 
   ImageDiv.appendChild(Image);
   return ImageDiv;
 }
 
 // =====================  Caractéristiques de chaque produit choisi : Nom, Couleur, Prix
-function displayDescription(completeCart) {
-  const Container = document.createElement("div");
-  Container.classList.add("cart__item__content");
+// *** Nom du produit ***
+function displayName(product) {
+  const ProductName = document.createElement("h2");
+  ProductName.innerText = product.name;
+  return ProductName;
+}
+
+// *** Couleur choisie ***
+function displayColor(product) {
+  const ProductColor = document.createElement("p");
+  ProductColor.innerText = product.color;
+  return ProductColor;
+}
+// *** Prix de l'article ***
+function displayPrice(product) {
+  const Price = document.createElement("p");
+  Price.innerText = product.price + "€";
+  return Price;
+}
+
+// ===================== Rattachement des éléments sus-créés
+function displayDescription(product) {
+  const Card = document.createElement("div");
+  Card.classList.add("cart__item__content");
 
   const ItemDescription = document.createElement("div");
   ItemDescription.classList.add("cart__item__content__description");
 
-  // Nom du produit
-  const ProductName = document.createElement("h2");
-  ProductName.innerText = completeCart.name;
+  const ProductName = displayName(product);
+  const ProductColor = displayColor(product);
+  const Price = displayPrice(product);
 
-  // Couleur choisie
-  const ProductColor = document.createElement("p");
-  ProductColor.innerText = completeCart.color;
-
-  const Price = document.createElement("p");
-  Price.innerText = completeCart.price;
-
-  // Rattachement de ces 3 élements à la div les contenant
   ItemDescription.appendChild(ProductName);
   ItemDescription.appendChild(Price);
   ItemDescription.appendChild(ProductColor);
 
-  // Ajout de la div "ItemDescription" à la fiche du produit
-  Container.appendChild(ItemDescription);
-  return Container;
+  Card.appendChild(ItemDescription);
+  return Card;
 }
 
 // =====================  Création des boutons pour les changements du panier (suppression, quantité) au HTML
@@ -156,12 +175,31 @@ function settings(product) {
   return Settings;
 }
 
+// Affichage de la quantité totale d'articles du panier
+function displayTotalQuantity() {
+  const AllItems = document.querySelector("#totalQuantity");
+  AllItems.innerText = "Tous les ";
+  return AllItems;
+}
+
+displayTotalQuantity();
+displayTotalPrice();
+
+function displayTotalPrice() {
+  const TotalPrice = document.querySelector("#totalPrice");
+  TotalPrice.innerText = "42";
+  return TotalPrice;
+}
+
 // =====================  Gestion du formulaire
 const SubmitBtn = document.querySelector(".cart__order__form__submit");
 
-// L'expression régulière pour les nom et prénom
+// Les expressions régulières pour l'identité et l'adresse postale
 const RegExIdentity = (name) => {
   return /^[a-z A-Z  À-ÿ ōŌ -]{2,55}$/.test(name);
+};
+const RegExAdress = (address) => {
+  return /^[a-z A-Z À-ÿ -]{1,45}$/.test(address);
 };
 
 // *** Soumission du formulaire ***
@@ -209,7 +247,7 @@ SubmitBtn.addEventListener("click", function (e) {
   function addressControl() {
     const Address = contact.address;
     if (
-      /^(\d+)?\,?\s?(a-x)?\,?\s?(a-x)?\s([a-zA-Zà-ÿ0-9\s]{2,})+$/gi.test(
+      /^([a-z A-Z À-ÿ -]\d+)?\,?\s?(a-x)?\,?\s?(a-x)?\s([a-zA-Zà-ÿ0-9\s]{2,})+$/gi.test(
         Address
       )
     ) {

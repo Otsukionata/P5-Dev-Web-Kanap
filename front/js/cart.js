@@ -31,8 +31,8 @@ async function getPriceFromApi(article) {
 
   const apiProduct = {
     price: dataFetch.price,
-    image: dataFetch.imageUrl,
-    altTxt: dataFetch.altTxt,
+    image: dataFetch.image,
+    altImg: dataFetch.altImg,
   };
 
   const completeItem = {
@@ -44,7 +44,7 @@ async function getPriceFromApi(article) {
   displayTotalQuantity(completeItem);
   displayTotalPrice(completeItem);
 
-  productDisplay(completeItem);
+  // productDisplay(completeItem);
   // return completeItem;
 }
 
@@ -52,7 +52,7 @@ function completeCart() {
   let cart = getCart();
   console.log(cart);
   cart.forEach((item) => {
-    getPriceFromApi(item);
+    productDisplay(item);
   });
 }
 

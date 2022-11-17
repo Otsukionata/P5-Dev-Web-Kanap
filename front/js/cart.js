@@ -20,21 +20,43 @@ function getCart() {
   }
 }
 
-let cart = getCart();
-//boucle puis fetch pour détails selon d'id de l'article dans le LS
-for (let item in cart) {
-  //fetch récupèrer détails produits qui ne sont pas sur le LS
-  fetch("http://localhost:3000/api/products/" + cart[item].id)
-    .then((res) => res.json())
-    .then((data) => {
-      let product = data;
+async function getPriceFromApi(article) {
+  let dataFetch = await fetch(
+    `http://localhost:3000/api/products/${article.id}`
+  )
+    .then((products) => products.json())
+    .then((product) => {
       return product;
-    })
-    .catch((error) => console.log(error));
+    });
 
-  console.log(product);
-  productDisplay(product);
+  const apiProduct = {
+    price: dataFetch.price,
+    image: dataFetch.imageUrl,
+    altTxt: dataFetch.altTxt,
+  };
+
+  const completeItem = {
+    ...article,
+    ...apiProduct,
+  };
+  console.log(completeItem);
+
+  displayTotalQuantity(completeItem);
+  displayTotalPrice(completeItem);
+
+  productDisplay(completeItem);
+  // return completeItem;
 }
+
+function completeCart() {
+  let cart = getCart();
+  console.log(cart);
+  cart.forEach((item) => {
+    getPriceFromApi(item);
+  });
+}
+
+completeCart();
 
 //  =====================  Fonction de sauvegarde des modifications du panier
 function saveCart(data) {
@@ -50,14 +72,14 @@ function container(DisplayArticle) {
 //   productDisplay(data);
 // });
 
-function productDisplay(product) {
-  //Mettre "cart copy" à la place de "product" et mettre toutes les fonctions de creation de la page
-  const DisplayArticle = displayArticle(product);
+function productDisplay(completeItem) {
+  //Mettre "cart copy" à la place de "completeItem" et mettre toutes les fonctions de creation de la page
+  const DisplayArticle = displayArticle(completeItem);
   container(DisplayArticle);
 
-  const DisplayImage = displayImage(product);
-  const DisplayDescription = displayDescription(product);
-  const DisplaySettings = settings(product);
+  const DisplayImage = displayImage(completeItem);
+  const DisplayDescription = displayDescription(completeItem);
+  const DisplaySettings = settings(completeItem);
 
   DisplayArticle.appendChild(DisplayImage);
   DisplayArticle.appendChild(DisplayDescription);
@@ -67,23 +89,23 @@ function productDisplay(product) {
 }
 
 //  =====================  Création de la balise article
-function displayArticle(product) {
+function displayArticle(completeItem) {
   const Article = document.createElement("article");
   Article.classList.add("cart__item");
-  Article.dataset.id = product.id;
-  Article.dataset.color = product.color;
+  Article.dataset.id = completeItem.id;
+  Article.dataset.color = completeItem.color;
 
   return Article;
 }
 
 // =====================  Affichage de l'image avec sa description
-function displayImage(product) {
+function displayImage(completeItem) {
   const ImageDiv = document.createElement("div");
   ImageDiv.classList.add("cart__item__img");
 
   const Image = document.createElement("img");
-  Image.src = product.imageUrl;
-  Image.altTxt = product.altImg;
+  Image.src = completeItem.image;
+  Image.altTxt = completeItem.altImg;
 
   ImageDiv.appendChild(Image);
   return ImageDiv;
@@ -91,36 +113,36 @@ function displayImage(product) {
 
 // =====================  Caractéristiques de chaque produit choisi : Nom, Couleur, Prix
 // *** Nom du produit ***
-function displayName(product) {
+function displayName(completeItem) {
   const ProductName = document.createElement("h2");
-  ProductName.innerText = product.name;
+  ProductName.innerText = completeItem.name;
   return ProductName;
 }
 
 // *** Couleur choisie ***
-function displayColor(product) {
+function displayColor(completeItem) {
   const ProductColor = document.createElement("p");
-  ProductColor.innerText = product.color;
+  ProductColor.innerText = completeItem.color;
   return ProductColor;
 }
 // *** Prix de l'article ***
-function displayPrice(product) {
+function displayPrice(completeItem) {
   const Price = document.createElement("p");
-  Price.innerText = product.price + "€";
+  Price.innerText = completeItem.price + "€";
   return Price;
 }
 
 // ===================== Rattachement des éléments sus-créés
-function displayDescription(product) {
+function displayDescription(completeItem) {
   const Card = document.createElement("div");
   Card.classList.add("cart__item__content");
 
   const ItemDescription = document.createElement("div");
   ItemDescription.classList.add("cart__item__content__description");
 
-  const ProductName = displayName(product);
-  const ProductColor = displayColor(product);
-  const Price = displayPrice(product);
+  const ProductName = displayName(completeItem);
+  const ProductColor = displayColor(completeItem);
+  const Price = displayPrice(completeItem);
 
   ItemDescription.appendChild(ProductName);
   ItemDescription.appendChild(Price);
@@ -131,7 +153,7 @@ function displayDescription(product) {
 }
 
 // =====================  Création des boutons pour les changements du panier (suppression, quantité) au HTML
-function settings(product) {
+function settings(completeItem) {
   const Settings = document.createElement("div");
   Settings.classList.add("cart__item__content__settings");
 
@@ -139,7 +161,7 @@ function settings(product) {
   ProductQuantity.classList.add("cart__item__content__settings__quantity");
 
   const QuantityNumber = document.createElement("p");
-  QuantityNumber.innerText = "Qté : " + product.quantity;
+  QuantityNumber.innerText = "Qté : " + completeItem.quantity;
 
   const QuantityChange = document.createElement("input");
   QuantityChange.setAttribute("type", "number");
@@ -147,7 +169,7 @@ function settings(product) {
   QuantityChange.setAttribute("name", "itemQuantity");
   QuantityChange.setAttribute("min", "1");
   QuantityChange.setAttribute("max", "100");
-  QuantityChange.setAttribute("value", product.quantity);
+  QuantityChange.setAttribute("value", completeItem.quantity);
   QuantityChange.setAttribute("aria-label", "Nombre d'articles");
 
   ProductQuantity.appendChild(QuantityNumber);
@@ -168,18 +190,15 @@ function settings(product) {
 }
 
 // Affichage de la quantité totale d'articles du panier
-function displayTotalQuantity() {
+function displayTotalQuantity(completeItem) {
   const AllItems = document.querySelector("#totalQuantity");
-  AllItems.innerText = "Tous les ";
+  AllItems.innerText = completeItem.quantity;
   return AllItems;
 }
 
-displayTotalQuantity();
-displayTotalPrice();
-
-function displayTotalPrice() {
+function displayTotalPrice(completeItem) {
   const TotalPrice = document.querySelector("#totalPrice");
-  TotalPrice.innerText = "42";
+  TotalPrice.innerText = completeItem.price * completeItem.quantity;
   return TotalPrice;
 }
 

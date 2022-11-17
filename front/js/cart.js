@@ -52,7 +52,7 @@ function completeCart() {
   let cart = getCart();
   console.log(cart);
   cart.forEach((item) => {
-    productDisplay(item);
+    getPriceFromApi(item);
   });
 }
 

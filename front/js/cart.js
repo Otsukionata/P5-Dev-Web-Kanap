@@ -20,29 +20,21 @@ function getCart() {
   }
 }
 
-function getPriceFromApi(data) {
-  const DataFetch = fetch("http://localhost:3000/api/products/" + data.id)
-    .then((response) => response.json())
-    .then((item) => {
-      return item.price;
-    });
+let cart = getCart();
+//boucle puis fetch pour détails selon d'id de l'article dans le LS
+for (let item in cart) {
+  //fetch récupèrer détails produits qui ne sont pas sur le LS
+  fetch("http://localhost:3000/api/products/" + cart[item].id)
+    .then((res) => res.json())
+    .then((data) => {
+      let product = data;
+      return product;
+    })
+    .catch((error) => console.log(error));
 
-  productDisplay(DataFetch);
-  console.log(DataFetch);
-  return DataFetch;
+  console.log(product);
+  productDisplay(product);
 }
-
-let cartWithPrices = [];
-
-async function completeCart() {
-  let cart = getCart();
-  console.log(cart);
-  cart.forEach(async (item) => {
-    await getPriceFromApi(item);
-  });
-}
-
-completeCart();
 
 //  =====================  Fonction de sauvegarde des modifications du panier
 function saveCart(data) {
@@ -199,11 +191,11 @@ const RegExIdentity = (name) => {
   return /^[a-z A-Z  À-ÿ ōŌ -]{2,55}$/.test(name);
 };
 const RegExAdress = (address) => {
-  return /^[a-z A-Z À-ÿ -]{1,45}$/.test(address);
+  return /^(.){2,50}$/.test(address);
 };
 
 // *** Soumission du formulaire ***
-SubmitBtn.addEventListener("click", function (e) {
+SubmitBtn.addEventListener("click", function () {
   // L'objet "contact" à envoyer au local storage et au back pour terminer la commande
   const contact = {
     firstName: document.querySelector("#firstName").value,

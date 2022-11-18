@@ -132,15 +132,19 @@ function totalquantityCalculation() {
     number.push(sumItem.quantity);
   });
   let totalNumber = `${eval(number.join("+"))}`;
+  console.log(totalNumber);
   return totalNumber;
 }
-totalquantityCalculation();
+displayTotalQuantity();
 
 function displayTotalPrice() {
   const TotalPrice = document.querySelector("#totalPrice");
   return TotalPrice;
 }
 
+function totalPrice() {
+  
+}
 
 // *** Rattachement des éléments sus-créés
 function displayDescription(completeItem) {
@@ -181,6 +185,7 @@ function settings(completeItem) {
   QuantityChange.setAttribute("max", "100");
   QuantityChange.setAttribute("value", completeItem.quantity);
   QuantityChange.setAttribute("aria-label", "Nombre d'articles");
+  QuantityChange.addEventListener("change", () => modifyQuantity());
 
   ProductQuantity.appendChild(QuantityNumber);
   ProductQuantity.appendChild(QuantityChange);

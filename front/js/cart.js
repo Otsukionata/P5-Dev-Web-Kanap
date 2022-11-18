@@ -31,26 +31,22 @@ async function getPriceFromApi(article) {
 
   const apiProduct = {
     price: dataFetch.price,
-    image: dataFetch.image,
-    altImg: dataFetch.altImg,
   };
 
   const completeItem = {
     ...article,
     ...apiProduct,
   };
-  console.log(completeItem);
 
   displayTotalQuantity(completeItem);
   displayTotalPrice(completeItem);
 
-  // productDisplay(completeItem);
+  productDisplay(completeItem);
   // return completeItem;
 }
 
 function completeCart() {
   let cart = getCart();
-  console.log(cart);
   cart.forEach((item) => {
     getPriceFromApi(item);
   });
@@ -67,10 +63,6 @@ function saveCart(data) {
 function container(DisplayArticle) {
   document.querySelector("#cart__items").appendChild(DisplayArticle);
 }
-
-// cart.forEach((data) => {
-//   productDisplay(data);
-// });
 
 function productDisplay(completeItem) {
   //Mettre "cart copy" à la place de "completeItem" et mettre toutes les fonctions de creation de la page
@@ -161,7 +153,7 @@ function settings(completeItem) {
   ProductQuantity.classList.add("cart__item__content__settings__quantity");
 
   const QuantityNumber = document.createElement("p");
-  QuantityNumber.innerText = "Qté : " + completeItem.quantity;
+  QuantityNumber.innerText = "Qté : ";
 
   const QuantityChange = document.createElement("input");
   QuantityChange.setAttribute("type", "number");
@@ -175,8 +167,19 @@ function settings(completeItem) {
   ProductQuantity.appendChild(QuantityNumber);
   ProductQuantity.appendChild(QuantityChange);
 
+  const DeleteProduct = deleteBtn();
+
+  Settings.appendChild(ProductQuantity);
+  Settings.appendChild(DeleteProduct);
+  return Settings;
+}
+
+function modifyQuantity() {}
+
+function deleteBtn() {
   const DeleteBtn = document.createElement("div");
   DeleteBtn.classList.add("cart__item__content__settings__delete");
+  DeleteBtn.addEventListener("click", () => deleteProduct());
 
   const DeleteProduct = document.createElement("p");
   DeleteProduct.classList.add("deleteItem");
@@ -184,23 +187,10 @@ function settings(completeItem) {
 
   DeleteBtn.appendChild(DeleteProduct);
 
-  Settings.appendChild(ProductQuantity);
-  Settings.appendChild(DeleteProduct);
-  return Settings;
+  return DeleteBtn;
 }
 
-// Affichage de la quantité totale d'articles du panier
-function displayTotalQuantity(completeItem) {
-  const AllItems = document.querySelector("#totalQuantity");
-  AllItems.innerText = completeItem.quantity;
-  return AllItems;
-}
-
-function displayTotalPrice(completeItem) {
-  const TotalPrice = document.querySelector("#totalPrice");
-  TotalPrice.innerText = completeItem.price * completeItem.quantity;
-  return TotalPrice;
-}
+function deleteProduct() {}
 
 // =====================  Gestion du formulaire
 const SubmitBtn = document.querySelector(".cart__order__form__submit");

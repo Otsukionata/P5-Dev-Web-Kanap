@@ -5,11 +5,9 @@ console.log("Mon panier");
 const Title = document.querySelector("title");
 Title.innerText = "Mon panier";
 
+//  =====================  Récupération et affichage des données du panier enregistré dans le LS
 function getCart() {
-  //  =====================  Récupération et affichage des données du panier enregistré dans le LS
   let cart = localStorage.getItem("cart");
-
-  // Ce qu'il se passe selon que le panier soit rempli ou vide
   if (cart === null) {
     let emptyCart = document.querySelector("#cart__items");
     emptyCart.innerText = "Votre panier est vide";
@@ -38,11 +36,7 @@ async function getPriceFromApi(article) {
     ...apiProduct,
   };
 
-  displayTotalQuantity(completeItem);
-  displayTotalPrice(completeItem);
-
   productDisplay(completeItem);
-  // return completeItem;
 }
 
 function completeCart() {

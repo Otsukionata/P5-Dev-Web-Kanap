@@ -39,6 +39,7 @@ async function getPriceFromApi(article) {
   productDisplay(completeItem);
 }
 
+// Pourquoi faut-il appeler le panier du LS ici pour faire la boucle ?
 function completeCart() {
   let cart = getCart();
   cart.forEach((item) => {
@@ -53,7 +54,7 @@ function saveCart(data) {
   localStorage.setItem("cart", JSON.stringify(data));
 }
 
-//  =====================  Affichage du panier
+//  =====================  Fonctions permettant l'affichage du panier
 function container(DisplayArticle) {
   document.querySelector("#cart__items").appendChild(DisplayArticle);
 }
@@ -73,7 +74,6 @@ function productDisplay(completeItem) {
   return DisplayArticle;
 }
 
-//  ***  Création de la balise article
 function displayArticle(completeItem) {
   const Article = document.createElement("article");
   Article.classList.add("cart__item");
@@ -142,9 +142,9 @@ function displayTotalPrice() {
   return TotalPrice;
 }
 
-function totalPrice() {
-  
-}
+function totalPrice() {}
+
+totalPrice();
 
 // *** Rattachement des éléments sus-créés
 function displayDescription(completeItem) {
@@ -212,7 +212,13 @@ function deleteBtn() {
 }
 
 //  =====================  Fonctions de changement au panier : ajout/soustraction/suppression d'articles
-function modifyQuantity() {}
+function modifyQuantity(completeItem, quantity) {
+  let cart = getCart();
+  let getProduct = cart.find((p) => p.id == completeItem.id);
+  if (getProduct != undefined) {
+    getProduct.quantity += quantity;
+  }
+}
 
 function deleteProduct() {}
 

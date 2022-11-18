@@ -5,7 +5,7 @@ console.log("Mon panier");
 const Title = document.querySelector("title");
 Title.innerText = "Mon panier";
 
-//  =====================  Récupération et affichage des données du panier enregistré dans le LS
+//  =====================  Récupération et affichage des données selon qu'elles soient dans le LS ou dans l'API
 function getCart() {
   let cart = localStorage.getItem("cart");
   if (cart === null) {
@@ -53,13 +53,12 @@ function saveCart(data) {
   localStorage.setItem("cart", JSON.stringify(data));
 }
 
-// Affichage du panier
+//  =====================  Affichage du panier
 function container(DisplayArticle) {
   document.querySelector("#cart__items").appendChild(DisplayArticle);
 }
 
 function productDisplay(completeItem) {
-  //Mettre "cart copy" à la place de "completeItem" et mettre toutes les fonctions de creation de la page
   const DisplayArticle = displayArticle(completeItem);
   container(DisplayArticle);
 
@@ -74,7 +73,7 @@ function productDisplay(completeItem) {
   return DisplayArticle;
 }
 
-//  =====================  Création de la balise article
+//  ***  Création de la balise article
 function displayArticle(completeItem) {
   const Article = document.createElement("article");
   Article.classList.add("cart__item");
@@ -84,7 +83,7 @@ function displayArticle(completeItem) {
   return Article;
 }
 
-// =====================  Affichage de l'image avec sa description
+// ***  Affichage de l'image avec sa description
 function displayImage(completeItem) {
   const ImageDiv = document.createElement("div");
   ImageDiv.classList.add("cart__item__img");
@@ -97,28 +96,26 @@ function displayImage(completeItem) {
   return ImageDiv;
 }
 
-// =====================  Caractéristiques de chaque produit choisi : Nom, Couleur, Prix
-// *** Nom du produit ***
+// ***  Caractéristiques de chaque produit choisi : Nom, Couleur, Prix
 function displayName(completeItem) {
   const ProductName = document.createElement("h2");
   ProductName.innerText = completeItem.name;
   return ProductName;
 }
 
-// *** Couleur choisie ***
 function displayColor(completeItem) {
   const ProductColor = document.createElement("p");
   ProductColor.innerText = completeItem.color;
   return ProductColor;
 }
-// *** Prix de l'article ***
+
 function displayPrice(completeItem) {
   const Price = document.createElement("p");
   Price.innerText = completeItem.price + "€";
   return Price;
 }
 
-// ===================== Rattachement des éléments sus-créés
+// *** Rattachement des éléments sus-créés
 function displayDescription(completeItem) {
   const Card = document.createElement("div");
   Card.classList.add("cart__item__content");
@@ -138,7 +135,7 @@ function displayDescription(completeItem) {
   return Card;
 }
 
-// =====================  Création des boutons pour les changements du panier (suppression, quantité) au HTML
+// ***  Création des boutons pour les changements du panier (suppression, quantité) au HTML
 function settings(completeItem) {
   const Settings = document.createElement("div");
   Settings.classList.add("cart__item__content__settings");
@@ -168,8 +165,6 @@ function settings(completeItem) {
   return Settings;
 }
 
-function modifyQuantity() {}
-
 function deleteBtn() {
   const DeleteBtn = document.createElement("div");
   DeleteBtn.classList.add("cart__item__content__settings__delete");
@@ -184,9 +179,12 @@ function deleteBtn() {
   return DeleteBtn;
 }
 
+//  =====================  Fonctions de changement au panier : ajout/soustraction/suppression d'articles
+function modifyQuantity() {}
+
 function deleteProduct() {}
 
-// =====================  Gestion du formulaire
+//  =====================  Gestion du formulaire
 const SubmitBtn = document.querySelector(".cart__order__form__submit");
 
 // Les expressions régulières pour l'identité et l'adresse postale
@@ -199,7 +197,7 @@ const RegExAdress = (address) => {
 
 // *** Soumission du formulaire ***
 SubmitBtn.addEventListener("click", function () {
-  // L'objet "contact" à envoyer au local storage et au back pour terminer la commande
+  // L'objet "contact" à envoyer au LS et au back
   const contact = {
     firstName: document.querySelector("#firstName").value,
     lastName: document.querySelector("#lastName").value,
@@ -241,11 +239,7 @@ SubmitBtn.addEventListener("click", function () {
 
   function addressControl() {
     const Address = contact.address;
-    if (
-      /^([a-z A-Z À-ÿ -]\d+)?\,?\s?(a-x)?\,?\s?(a-x)?\s([a-zA-Zà-ÿ0-9\s]{2,})+$/gi.test(
-        Address
-      )
-    ) {
+    if (RegExAdress(Address)) {
       addressErrMsg.innerText = "";
       return true;
     } else {
@@ -304,7 +298,7 @@ SubmitBtn.addEventListener("click", function () {
     contact,
   };
 
-  // ===================== Envoi au serveur
+  //  =====================  Envoi au serveur
   fetch("http://localhost:3000/api/products/order", {
     method: "POST",
     headers: {

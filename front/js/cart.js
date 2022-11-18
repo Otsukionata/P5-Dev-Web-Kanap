@@ -96,24 +96,51 @@ function displayImage(completeItem) {
   return ImageDiv;
 }
 
-// ***  Caractéristiques de chaque produit choisi : Nom, Couleur, Prix
+// ***  Affichage nom
 function displayName(completeItem) {
   const ProductName = document.createElement("h2");
   ProductName.innerText = completeItem.name;
   return ProductName;
 }
 
+// ***  Affichage couleur
 function displayColor(completeItem) {
   const ProductColor = document.createElement("p");
   ProductColor.innerText = completeItem.color;
   return ProductColor;
 }
 
+// ***  Affichage prix
 function displayPrice(completeItem) {
   const Price = document.createElement("p");
   Price.innerText = completeItem.price + "€";
   return Price;
 }
+
+// *** Affichage des totaux
+
+function displayTotalQuantity() {
+  const AllItems = document.querySelector("#totalQuantity");
+  AllItems.innerText = totalquantityCalculation();
+  return AllItems;
+}
+
+function totalquantityCalculation() {
+  let cart = getCart();
+  let number = [];
+  cart.forEach((sumItem) => {
+    number.push(sumItem.quantity);
+  });
+  let totalNumber = `${eval(number.join("+"))}`;
+  return totalNumber;
+}
+totalquantityCalculation();
+
+function displayTotalPrice() {
+  const TotalPrice = document.querySelector("#totalPrice");
+  return TotalPrice;
+}
+
 
 // *** Rattachement des éléments sus-créés
 function displayDescription(completeItem) {

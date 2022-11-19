@@ -8,7 +8,7 @@ Title.innerText = "Mon panier";
 //  =====================  Récupération et affichage des données selon qu'elles soient dans le LS ou dans l'API
 function getCart() {
   let cart = localStorage.getItem("cart");
-  if (cart === null || cart.length == 0) {
+  if (cart === null || cart === "[]") {
     let emptyCart = document.querySelector("#cart__items");
     emptyCart.innerText = "Votre panier est vide";
     document.querySelector(".cart__order").style.display = "none";
@@ -122,8 +122,6 @@ function displayPrice(completeItem) {
 // *** Affichage des totaux
 function displayTotalQuantity() {
   const AllItems = document.querySelector("#totalQuantity");
-  // Afficher "pas d'articles" dans le cas d'un panier vide
-  AllItems.innerText = totalquantityCalculation();
   return AllItems;
 }
 
@@ -372,6 +370,7 @@ SubmitBtn.addEventListener("click", function (e) {
     localStorage.setItem("client", JSON.stringify(contact));
   } else {
     alert("Erreur formulaire. Veuillez vérifier les champs indiqués.");
+    return;
   }
 
   let products = [];
@@ -401,6 +400,6 @@ SubmitBtn.addEventListener("click", function (e) {
     .then(function (json) {
       const ID = json.orderId;
       window.location = `./confirmation.html?id=${ID}`;
-      //   // window.localStorage.clear();
+      window.localStorage.clear();
     });
 });

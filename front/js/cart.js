@@ -35,13 +35,14 @@ async function getPriceFromApi(article) {
     ...article,
     ...apiProduct,
   };
-
+  console.log(completeItem);
   productDisplay(completeItem);
 }
 
 // Pourquoi faut-il appeler le panier du LS ici pour faire la boucle ?
 function completeCart() {
   let cart = getCart();
+  // let total = 0;
   cart.forEach((item) => {
     getPriceFromApi(item);
   });
@@ -71,8 +72,11 @@ function productDisplay(completeItem) {
   DisplayArticle.appendChild(DisplayDescription);
   DisplayArticle.appendChild(DisplaySettings);
 
+  // total = total + completeItem.price * completeItem.quantity;
+
   return DisplayArticle;
 }
+// console.log(total);
 
 function displayArticle(completeItem) {
   const Article = document.createElement("article");
@@ -132,7 +136,6 @@ function totalquantityCalculation() {
     number.push(sumItem.quantity);
   });
   let totalNumber = `${eval(number.join("+"))}`;
-  console.log(totalNumber);
   return totalNumber;
 }
 displayTotalQuantity();
@@ -171,6 +174,15 @@ function settings(completeItem) {
   const Settings = document.createElement("div");
   Settings.classList.add("cart__item__content__settings");
 
+  const ProductQuantity = change(completeItem);
+  const DeleteProduct = deleteBtn();
+
+  Settings.appendChild(ProductQuantity);
+  Settings.appendChild(DeleteProduct);
+  return Settings;
+}
+
+function change(completeItem) {
   const ProductQuantity = document.createElement("div");
   ProductQuantity.classList.add("cart__item__content__settings__quantity");
 
@@ -185,22 +197,27 @@ function settings(completeItem) {
   QuantityChange.setAttribute("max", "100");
   QuantityChange.setAttribute("value", completeItem.quantity);
   QuantityChange.setAttribute("aria-label", "Nombre d'articles");
-  QuantityChange.addEventListener("change", () => modifyQuantity());
+  QuantityChange.addEventListener("change", function () {
+    let productId = this.closest("article").dataset.id;
+    let productColor = this.closest("article").dataset.color;
+    let productQuantity = Number(this.value);
+    modifyQuantity(productId, productColor, productQuantity);
+  });
 
   ProductQuantity.appendChild(QuantityNumber);
   ProductQuantity.appendChild(QuantityChange);
-
-  const DeleteProduct = deleteBtn();
-
-  Settings.appendChild(ProductQuantity);
-  Settings.appendChild(DeleteProduct);
-  return Settings;
+  return ProductQuantity;
 }
 
 function deleteBtn() {
   const DeleteBtn = document.createElement("div");
   DeleteBtn.classList.add("cart__item__content__settings__delete");
-  DeleteBtn.addEventListener("click", () => deleteProduct());
+  DeleteBtn.addEventListener("click", function () {
+    let productId = this.closest("article").dataset.id;
+    let productColor = this.closest("article").dataset.color;
+    deleteProduct(productId, productColor);
+    window.location.reload("true");
+  });
 
   const DeleteProduct = document.createElement("p");
   DeleteProduct.classList.add("deleteItem");
@@ -212,15 +229,21 @@ function deleteBtn() {
 }
 
 //  =====================  Fonctions de changement au panier : ajout/soustraction/suppression d'articles
-function modifyQuantity(completeItem, quantity) {
+function modifyQuantity(id, color, quantity) {
   let cart = getCart();
-  let getProduct = cart.find((p) => p.id == completeItem.id);
+  let getProduct = cart.find((p) => p.id == id && p.color == color);
   if (getProduct != undefined) {
-    getProduct.quantity += quantity;
+    getProduct.quantity = quantity;
   }
+  console.log(cart);
+  saveCart(cart);
 }
 
-function deleteProduct() {}
+function deleteProduct(id, color) {
+  let cart = getCart();
+  cart = cart.filter((p) => p.color !== color && p.id != id);
+  saveCart(cart);
+}
 
 //  =====================  Gestion du formulaire
 const SubmitBtn = document.querySelector(".cart__order__form__submit");

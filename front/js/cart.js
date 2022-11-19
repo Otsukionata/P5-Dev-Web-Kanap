@@ -18,9 +18,6 @@ function getCart() {
   }
 }
 
-/**
- * @param {JSON} article
- */
 async function getPriceFromApi(article) {
   let dataFetch = await fetch(
     `http://localhost:3000/api/products/${article.id}`
@@ -38,6 +35,7 @@ async function getPriceFromApi(article) {
     ...article,
     ...apiProduct,
   };
+
   productDisplay(completeItem);
   displayTotalPrice(apiProduct);
 }
@@ -54,9 +52,6 @@ function completeCart() {
 completeCart();
 
 //  =====================  Fonction de sauvegarde des modifications du panier
-/**
- * @param {JSON} data
- */
 function saveCart(data) {
   localStorage.setItem("cart", JSON.stringify(data));
 }
@@ -127,6 +122,7 @@ function displayPrice(completeItem) {
 // *** Affichage des totaux
 function displayTotalQuantity() {
   const AllItems = document.querySelector("#totalQuantity");
+  // Afficher "pas d'articles" dans le cas d'un panier vide
   AllItems.innerText = totalquantityCalculation();
   return AllItems;
 }
@@ -226,7 +222,7 @@ function deleteBtn() {
     let productId = this.closest("article").dataset.id;
     let productColor = this.closest("article").dataset.color;
     deleteProduct(productId, productColor);
-    window.location.reload("true");
+    window.location.reload(true);
   });
 
   const DeleteProduct = document.createElement("p");
@@ -266,12 +262,27 @@ const SubmitBtn = document.querySelector(".cart__order__form__submit");
 const RegExIdentity = (name) => {
   return /^[a-z A-Z  À-ÿ ōŌ -]{2,55}$/.test(name);
 };
-const RegExAdress = (address) => {
-  return /^(.){2,50}$/.test(address);
+const RegExAdress = (postalAdress) => {
+  return /([A-Za-zà-ÿ0-9]+)?\,?\s?(a-x)?\,?\s?(a-x)?\s([a-zA-Zà-ÿ0-9\s]{2,})+/gi.test(
+    postalAdress
+  );
 };
 
+// *** Récupération d'éventuelles données de client existantes pour auto-remplissage du formulaire ***
+const ExistingContact = JSON.parse(localStorage.getItem("client"));
+if (ExistingContact) {
+  function ClientFromLS(input) {
+    document.querySelector(`#${input}`).value = ExistingContact[input];
+  }
+  ClientFromLS("firstName");
+  ClientFromLS("lastName");
+  ClientFromLS("address");
+  ClientFromLS("city");
+  ClientFromLS("email");
+}
+
 // *** Soumission du formulaire ***
-SubmitBtn.addEventListener("click", function () {
+SubmitBtn.addEventListener("click", function (e) {
   // L'objet "contact" à envoyer au LS et au back
   const contact = {
     firstName: document.querySelector("#firstName").value,
@@ -282,7 +293,6 @@ SubmitBtn.addEventListener("click", function () {
   };
 
   // *** Contrôle du formulaire ***
-
   let forenameErrMsg = document.querySelector("#firstNameErrorMsg");
   let surnameErrMsg = document.querySelector("#lastNameErrorMsg");
   let addressErrMsg = document.querySelector("#addressErrorMsg");
@@ -296,6 +306,7 @@ SubmitBtn.addEventListener("click", function () {
       return true;
     } else {
       forenameErrMsg.innerText = "Veuillez entrer un prénom valide";
+      e.stopPropagation();
       return false;
     }
   }
@@ -323,7 +334,7 @@ SubmitBtn.addEventListener("click", function () {
     }
   }
 
-  // Nom de ville française le plus court : "Y", nom le plus long : "Saint-Remy-en-Bouzemont-Saint-Genest-et-Isson"
+  // Nom de ville française le plus court : "Y" ; le plus long : "Saint-Remy-en-Bouzemont-Saint-Genest-et-Isson"
   function cityControl() {
     const City = contact.city;
     if (/^[a-z A-Z À-ÿ -]{1,45}$/.test(City)) {
@@ -369,13 +380,11 @@ SubmitBtn.addEventListener("click", function () {
     products.push(item.id);
   });
 
-  console.log(products);
   const Order = {
     products,
     contact,
   };
 
-  console.log(Order);
   //  =====================  Envoi au serveur
   fetch("http://localhost:3000/api/products/order", {
     method: "POST",
@@ -392,21 +401,6 @@ SubmitBtn.addEventListener("click", function () {
     .then(function (json) {
       const ID = json.orderId;
       window.location = `./confirmation.html?id=${ID}`;
-      window.localStorage.clear();
+      //   // window.localStorage.clear();
     });
 });
-
-// *** Récupération d'éventuelles données de client existantes pour auto-remplissage du formulaire ***
-const ExistingContact = JSON.parse(localStorage.getItem("client"));
-if (ExistingContact) {
-  function ClientFromLS(input) {
-    document.querySelector(`#${input}`).value = ExistingContact[input];
-  }
-  ClientFromLS("firstName");
-  ClientFromLS("lastName");
-  ClientFromLS("address");
-  ClientFromLS("city");
-  ClientFromLS("email");
-} else {
-  console.log("Création fichier client");
-}

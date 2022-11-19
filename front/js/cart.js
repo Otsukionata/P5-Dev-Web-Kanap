@@ -8,7 +8,7 @@ Title.innerText = "Mon panier";
 //  =====================  Récupération et affichage des données selon qu'elles soient dans le LS ou dans l'API
 function getCart() {
   let cart = localStorage.getItem("cart");
-  if (cart === null) {
+  if (cart === null || cart.length == 0) {
     let emptyCart = document.querySelector("#cart__items");
     emptyCart.innerText = "Votre panier est vide";
     document.querySelector(".cart__order").style.display = "none";
@@ -18,6 +18,9 @@ function getCart() {
   }
 }
 
+/**
+ * @param {JSON} article
+ */
 async function getPriceFromApi(article) {
   let dataFetch = await fetch(
     `http://localhost:3000/api/products/${article.id}`
@@ -35,14 +38,14 @@ async function getPriceFromApi(article) {
     ...article,
     ...apiProduct,
   };
-  console.log(completeItem);
   productDisplay(completeItem);
+  displayTotalPrice(apiProduct);
 }
 
-// Pourquoi faut-il appeler le panier du LS ici pour faire la boucle ?
 function completeCart() {
   let cart = getCart();
-  // let total = 0;
+  displayTotalQuantity();
+
   cart.forEach((item) => {
     getPriceFromApi(item);
   });
@@ -51,6 +54,9 @@ function completeCart() {
 completeCart();
 
 //  =====================  Fonction de sauvegarde des modifications du panier
+/**
+ * @param {JSON} data
+ */
 function saveCart(data) {
   localStorage.setItem("cart", JSON.stringify(data));
 }
@@ -72,11 +78,8 @@ function productDisplay(completeItem) {
   DisplayArticle.appendChild(DisplayDescription);
   DisplayArticle.appendChild(DisplaySettings);
 
-  // total = total + completeItem.price * completeItem.quantity;
-
   return DisplayArticle;
 }
-// console.log(total);
 
 function displayArticle(completeItem) {
   const Article = document.createElement("article");
@@ -122,7 +125,6 @@ function displayPrice(completeItem) {
 }
 
 // *** Affichage des totaux
-
 function displayTotalQuantity() {
   const AllItems = document.querySelector("#totalQuantity");
   AllItems.innerText = totalquantityCalculation();
@@ -138,16 +140,24 @@ function totalquantityCalculation() {
   let totalNumber = `${eval(number.join("+"))}`;
   return totalNumber;
 }
-displayTotalQuantity();
 
-function displayTotalPrice() {
+function displayTotalPrice(product) {
   const TotalPrice = document.querySelector("#totalPrice");
+  TotalPrice.innerText = totalPrice(product);
   return TotalPrice;
 }
 
-function totalPrice() {}
+function totalPrice(product) {
+  let total = [];
+  let cart = getCart();
 
-totalPrice();
+  cart.forEach((sumPrice) => {
+    total.push(product.price * sumPrice.quantity);
+  });
+  let totalPrice = `${eval(total.join("+"))}`;
+  console.log(totalPrice);
+  return totalPrice;
+}
 
 // *** Rattachement des éléments sus-créés
 function displayDescription(completeItem) {
@@ -200,7 +210,7 @@ function change(completeItem) {
   QuantityChange.addEventListener("change", function () {
     let productId = this.closest("article").dataset.id;
     let productColor = this.closest("article").dataset.color;
-    let productQuantity = Number(this.value);
+    let productQuantity = this.value;
     modifyQuantity(productId, productColor, productQuantity);
   });
 
@@ -235,13 +245,17 @@ function modifyQuantity(id, color, quantity) {
   if (getProduct != undefined) {
     getProduct.quantity = quantity;
   }
-  console.log(cart);
+  window.location.reload(true);
+
   saveCart(cart);
 }
 
 function deleteProduct(id, color) {
   let cart = getCart();
   cart = cart.filter((p) => p.color !== color && p.id != id);
+
+  alert("Ce produit va être supprimé du panier !");
+
   saveCart(cart);
 }
 
@@ -350,15 +364,18 @@ SubmitBtn.addEventListener("click", function () {
   }
 
   let products = [];
+  let cart = getCart();
   cart.forEach((item) => {
     products.push(item.id);
   });
 
+  console.log(products);
   const Order = {
     products,
     contact,
   };
 
+  console.log(Order);
   //  =====================  Envoi au serveur
   fetch("http://localhost:3000/api/products/order", {
     method: "POST",
@@ -375,14 +392,13 @@ SubmitBtn.addEventListener("click", function () {
     .then(function (json) {
       const ID = json.orderId;
       window.location = `./confirmation.html?id=${ID}`;
-      // window.localStorage.clear();
+      window.localStorage.clear();
     });
 });
 
-// *** Récupération d'éventuelles données de client existantes ***
+// *** Récupération d'éventuelles données de client existantes pour auto-remplissage du formulaire ***
 const ExistingContact = JSON.parse(localStorage.getItem("client"));
 if (ExistingContact) {
-  // Remplissage des champs avec les données trouvées
   function ClientFromLS(input) {
     document.querySelector(`#${input}`).value = ExistingContact[input];
   }

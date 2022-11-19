@@ -122,6 +122,8 @@ function displayPrice(completeItem) {
 // *** Affichage des totaux
 function displayTotalQuantity() {
   const AllItems = document.querySelector("#totalQuantity");
+  AllItems.innerText = totalquantityCalculation();
+
   return AllItems;
 }
 
@@ -246,7 +248,7 @@ function modifyQuantity(id, color, quantity) {
 
 function deleteProduct(id, color) {
   let cart = getCart();
-  cart = cart.filter((p) => p.color !== color && p.id != id);
+  cart = cart.filter((p) => p.color !== color && p.id === id);
 
   alert("Ce produit va être supprimé du panier !");
 

@@ -129,12 +129,13 @@ function displayTotalQuantity() {
 
 function totalquantityCalculation() {
   let cart = getCart();
-  let number = [];
+  let number = 0;
+
   cart.forEach((sumItem) => {
-    number.push(sumItem.quantity);
+    number += sumItem.quantity;
   });
-  let totalNumber = `${eval(number.join("+"))}`;
-  return totalNumber;
+
+  return number;
 }
 
 function displayTotalPrice(product) {
@@ -151,7 +152,6 @@ function totalPrice(product) {
     total.push(product.price * sumPrice.quantity);
   });
   let totalPrice = `${eval(total.join("+"))}`;
-  console.log(totalPrice);
   return totalPrice;
 }
 

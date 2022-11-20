@@ -132,7 +132,7 @@ function totalquantityCalculation() {
   let number = 0;
 
   cart.forEach((sumItem) => {
-    number += sumItem.quantity;
+    number += eval(sumItem.quantity);
   });
 
   return number;

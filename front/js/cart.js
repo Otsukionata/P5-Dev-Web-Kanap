@@ -1,5 +1,4 @@
 "use strict";
-console.log("Mon panier");
 
 // =====================  Affichage du nom de la page dans la balise Title pour l'onglet
 const Title = document.querySelector("title");

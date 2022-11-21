@@ -1,5 +1,4 @@
 "use scrict";
-console.log("Kanap, le Canap");
 
 // 1. Affichage du produit choisi depuis la page d'accueil
 const URL = new URLSearchParams(window.location.search);

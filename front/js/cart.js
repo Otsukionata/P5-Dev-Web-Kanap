@@ -283,6 +283,8 @@ if (ExistingContact) {
 
 // *** Soumission du formulaire ***
 SubmitBtn.addEventListener("click", function (e) {
+  e.preventDefault();
+
   // L'objet "contact" à envoyer au LS et au back
   const contact = {
     firstName: document.querySelector("#firstName").value,

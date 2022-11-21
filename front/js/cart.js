@@ -50,23 +50,18 @@ function completeCart() {
 
 completeCart();
 
-//  =====================  Fonction de sauvegarde des modifications du panier
-function saveCart(data) {
-  localStorage.setItem("cart", JSON.stringify(data));
-}
-
 //  =====================  Fonctions permettant l'affichage du panier
 function container(DisplayArticle) {
   document.querySelector("#cart__items").appendChild(DisplayArticle);
 }
 
-function productDisplay(completeItem) {
-  const DisplayArticle = displayArticle(completeItem);
+function productDisplay(product) {
+  const DisplayArticle = displayArticle(product);
   container(DisplayArticle);
 
-  const DisplayImage = displayImage(completeItem);
-  const DisplayDescription = displayDescription(completeItem);
-  const DisplaySettings = settings(completeItem);
+  const DisplayImage = displayImage(product);
+  const DisplayDescription = displayDescription(product);
+  const DisplaySettings = settings(product);
 
   DisplayArticle.appendChild(DisplayImage);
   DisplayArticle.appendChild(DisplayDescription);
@@ -75,96 +70,60 @@ function productDisplay(completeItem) {
   return DisplayArticle;
 }
 
-function displayArticle(completeItem) {
+function displayArticle(product) {
   const Article = document.createElement("article");
   Article.classList.add("cart__item");
-  Article.dataset.id = completeItem.id;
-  Article.dataset.color = completeItem.color;
+  Article.dataset.id = product.id;
+  Article.dataset.color = product.color;
 
   return Article;
 }
 
 // ***  Affichage de l'image avec sa description
-function displayImage(completeItem) {
+function displayImage(product) {
   const ImageDiv = document.createElement("div");
   ImageDiv.classList.add("cart__item__img");
 
   const Image = document.createElement("img");
-  Image.src = completeItem.image;
-  Image.altTxt = completeItem.altImg;
+  Image.src = product.image;
+  Image.altTxt = product.altImg;
 
   ImageDiv.appendChild(Image);
   return ImageDiv;
 }
 
 // ***  Affichage nom
-function displayName(completeItem) {
+function displayName(product) {
   const ProductName = document.createElement("h2");
-  ProductName.innerText = completeItem.name;
+  ProductName.innerText = product.name;
   return ProductName;
 }
 
 // ***  Affichage couleur
-function displayColor(completeItem) {
+function displayColor(product) {
   const ProductColor = document.createElement("p");
-  ProductColor.innerText = completeItem.color;
+  ProductColor.innerText = product.color;
   return ProductColor;
 }
 
 // ***  Affichage prix
-function displayPrice(completeItem) {
+function displayPrice(product) {
   const Price = document.createElement("p");
-  Price.innerText = completeItem.price + "€";
+  Price.innerText = product.price + "€";
   return Price;
 }
 
-// *** Affichage des totaux
-function displayTotalQuantity() {
-  const AllItems = document.querySelector("#totalQuantity");
-  AllItems.innerText = totalquantityCalculation();
-
-  return AllItems;
-}
-
-function totalquantityCalculation() {
-  let cart = getCart();
-  let number = 0;
-
-  cart.forEach((sumItem) => {
-    number += eval(sumItem.quantity);
-  });
-
-  return number;
-}
-
-function displayTotalPrice(product) {
-  const TotalPrice = document.querySelector("#totalPrice");
-  TotalPrice.innerText = totalPrice(product);
-  return TotalPrice;
-}
-
-function totalPrice(product) {
-  let total = [];
-  let cart = getCart();
-
-  cart.forEach((sumPrice) => {
-    total.push(product.price * sumPrice.quantity);
-  });
-  let totalPrice = `${eval(total.join("+"))}`;
-  return totalPrice;
-}
-
 // *** Rattachement des éléments sus-créés
-function displayDescription(completeItem) {
+function displayDescription(product) {
   const Card = document.createElement("div");
   Card.classList.add("cart__item__content");
 
   const ItemDescription = document.createElement("div");
   ItemDescription.classList.add("cart__item__content__description");
 
-  const ProductName = displayName(completeItem);
-  const ProductColor = displayColor(completeItem);
-  const Price = displayPrice(completeItem);
+  const ProductName = displayName(product);
+  const ProductColor = displayColor(product);
+  const Price = displayPrice(product);
 
   ItemDescription.appendChild(ProductName);
   ItemDescription.appendChild(Price);
@@ -174,12 +133,17 @@ function displayDescription(completeItem) {
   return Card;
 }
 
+//  =====================  Fonction de sauvegarde des modifications du panier
+function saveCart(data) {
+  localStorage.setItem("cart", JSON.stringify(data));
+}
+
 // ***  Création des boutons pour les changements du panier (suppression, quantité) au HTML
-function settings(completeItem) {
+function settings(product) {
   const Settings = document.createElement("div");
   Settings.classList.add("cart__item__content__settings");
 
-  const ProductQuantity = change(completeItem);
+  const ProductQuantity = changeBtn(product);
   const DeleteProduct = deleteBtn();
 
   Settings.appendChild(ProductQuantity);
@@ -187,7 +151,7 @@ function settings(completeItem) {
   return Settings;
 }
 
-function change(completeItem) {
+function changeBtn(product) {
   const ProductQuantity = document.createElement("div");
   ProductQuantity.classList.add("cart__item__content__settings__quantity");
 
@@ -200,7 +164,7 @@ function change(completeItem) {
   QuantityChange.setAttribute("name", "itemQuantity");
   QuantityChange.setAttribute("min", "1");
   QuantityChange.setAttribute("max", "100");
-  QuantityChange.setAttribute("value", completeItem.quantity);
+  QuantityChange.setAttribute("value", product.quantity);
   QuantityChange.setAttribute("aria-label", "Nombre d'articles");
   QuantityChange.addEventListener("change", function () {
     let productId = this.closest("article").dataset.id;
@@ -254,6 +218,42 @@ function deleteProduct(id, color) {
   saveCart(cart);
 }
 
+// *** Affichage des totaux
+function displayTotalQuantity() {
+  const AllItems = document.querySelector("#totalQuantity");
+  AllItems.innerText = totalquantityCalculation();
+
+  return AllItems;
+}
+
+function totalquantityCalculation() {
+  let cart = getCart();
+  let number = 0;
+
+  cart.forEach((sumItem) => {
+    number += eval(sumItem.quantity);
+  });
+
+  return number;
+}
+
+function displayTotalPrice(product) {
+  const TotalPrice = document.querySelector("#totalPrice");
+  TotalPrice.innerText = totalPriceCalculation(product);
+  return TotalPrice;
+}
+
+function totalPriceCalculation(product) {
+  let total = [];
+  let cart = getCart();
+
+  cart.forEach((sumPrice) => {
+    total.push(product.price * sumPrice.quantity);
+  });
+  let totalPrice = `${eval(total.join("+"))}`;
+  return totalPrice;
+}
+
 //  =====================  Gestion du formulaire
 const SubmitBtn = document.querySelector(".cart__order__form__submit");
 
@@ -262,23 +262,10 @@ const RegExIdentity = (name) => {
   return /^[a-z A-Z  À-ÿ ōŌ -]{2,55}$/.test(name);
 };
 const RegExAdress = (postalAdress) => {
-  return /([A-Za-zà-ÿ0-9]+)?\,?\s?(a-x)?\,?\s?(a-x)?\s([a-zA-Zà-ÿ0-9\s]{2,})+/gi.test(
+  return /([A-Z a-z à-ÿ 0-9]+)?\,?\s?(a-x)?\,?\s?(a-x)?\s([a-z A-Z à-ÿ 0-9\s]{2,})+/gi.test(
     postalAdress
   );
 };
-
-// *** Récupération d'éventuelles données de client existantes pour auto-remplissage du formulaire ***
-const ExistingContact = JSON.parse(localStorage.getItem("client"));
-if (ExistingContact) {
-  function ClientFromLS(input) {
-    document.querySelector(`#${input}`).value = ExistingContact[input];
-  }
-  ClientFromLS("firstName");
-  ClientFromLS("lastName");
-  ClientFromLS("address");
-  ClientFromLS("city");
-  ClientFromLS("email");
-}
 
 // *** Soumission du formulaire ***
 SubmitBtn.addEventListener("click", function (e) {
@@ -307,7 +294,6 @@ SubmitBtn.addEventListener("click", function (e) {
       return true;
     } else {
       forenameErrMsg.innerText = "Veuillez entrer un prénom valide";
-      e.stopPropagation();
       return false;
     }
   }

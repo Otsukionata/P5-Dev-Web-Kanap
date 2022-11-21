@@ -4,8 +4,6 @@
 const URL = new URLSearchParams(window.location.search);
 const ID = URL.get("id");
 
-console.log(URL);
-
 // 2. Ajout des caractéristiques du produit choisi
 fetch("http://localhost:3000/api/products/" + ID)
   .then(function (response) {
@@ -72,7 +70,6 @@ fetch("http://localhost:3000/api/products/" + ID)
         //  Pour s'assurer qu'une quantité a été entrée
         alert("Veuillez choisir une quantité");
       } else {
-
         // Création de l'objet contenant les informations à stocker dans le localStorage
         let cart = [];
 

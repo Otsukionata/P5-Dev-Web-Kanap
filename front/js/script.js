@@ -7,12 +7,17 @@ async function getProducts() {
 }
 getProducts();
 
+/**
+ *
+ * @param { Array } product
+ */
+
 function createProduct(product) {
   for (let i = 0; i < product.length; i++) {
     // Balise récupérant les cartes dans le DOM
     const SectionCards = document.querySelector("#items");
 
-    // Lien vers le produit
+    // Faire de chaque carte un lien vers la page produit correspondante
     const Link = document.createElement("a");
     Link.href = "./product.html?id=" + product[i]._id;
     const Cards = document.createElement("article");

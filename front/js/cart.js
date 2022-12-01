@@ -244,8 +244,8 @@ function displayTotalPrice(product) {
 }
 
 function totalPriceCalculation(product) {
-  let total = [];
   let cart = getCart();
+  let total = [];
 
   cart.forEach((sumPrice) => {
     total.push(product.price * sumPrice.quantity);

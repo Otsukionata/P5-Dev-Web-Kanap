@@ -217,7 +217,8 @@ function modifyQuantity(id, color, quantity) {
 
 function deleteProduct(id, color) {
   let cart = getCart();
-  cart = cart.filter((p) => p.color !== color && p.id === id);
+  let newItem = cart.find((p) => p.id !== id && p.color !== color);
+  cart.splice(newItem, 1);
 
   alert("Ce produit va être supprimé du panier !");
 

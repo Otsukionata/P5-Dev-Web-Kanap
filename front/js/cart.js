@@ -17,7 +17,7 @@ function getCart() {
   }
 }
 
-// Récupération du prix
+// *** Récupération du prix avec gestion d'erreur
 async function getPriceFromApi(article) {
   try {
     const response = await fetch(
@@ -141,6 +141,8 @@ function saveCart(data) {
 }
 
 // ***  Création des boutons pour les changements du panier (suppression, quantité) au HTML
+
+// Les boutons à activer
 function settings(product) {
   const Settings = document.createElement("div");
   Settings.classList.add("cart__item__content__settings");
@@ -153,6 +155,7 @@ function settings(product) {
   return Settings;
 }
 
+// L'input pour le changement
 function changeBtn(product) {
   const ProductQuantity = document.createElement("div");
   ProductQuantity.classList.add("cart__item__content__settings__quantity");
@@ -180,6 +183,7 @@ function changeBtn(product) {
   return ProductQuantity;
 }
 
+// Le bouton de suppression
 function deleteBtn() {
   const DeleteBtn = document.createElement("div");
   DeleteBtn.classList.add("cart__item__content__settings__delete");

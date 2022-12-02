@@ -17,35 +17,37 @@ function getCart() {
   }
 }
 
+// Récupération du prix
 async function getPriceFromApi(article) {
-  let dataFetch = await fetch(
-    `http://localhost:3000/api/products/${article.id}`
-  )
-    .then((products) => products.json())
-    .then((product) => {
-      return product;
-    });
+  try {
+    const response = await fetch(
+      `http://localhost:3000/api/products/${article.id}`
+    );
+    const dataFetch = await response.json();
 
-  const apiProduct = {
-    price: dataFetch.price,
-  };
+    const completeItem = {
+      ...article,
+      ...dataFetch,
+    };
+    productDisplay(completeItem);
 
-  const completeItem = {
-    ...article,
-    ...apiProduct,
-  };
-
-  productDisplay(completeItem);
-  displayTotalPrice(apiProduct);
+    return dataFetch.price;
+  } catch (e) {
+    console.log("Erreur");
+    let fetchError = document.querySelector("#cart__items");
+    fetchError.innerText = "Erreur d'accès au panier";
+  }
 }
 
-function completeCart() {
+// *** Affichage du panier completé et des prix et quantités totales
+async function completeCart() {
   let cart = getCart();
-  displayTotalQuantity();
 
-  cart.forEach((item) => {
-    getPriceFromApi(item);
-  });
+  const totalQuantity = totalquantityCalculation(cart);
+  displayTotalQuantity(totalQuantity);
+
+  const totalPrice = await totalPriceCalculation(cart);
+  displayTotalPrice(totalPrice);
 }
 
 completeCart();
@@ -219,41 +221,32 @@ function deleteProduct(id, color) {
 }
 
 // *** Affichage des totaux
-function displayTotalQuantity() {
-  const AllItems = document.querySelector("#totalQuantity");
-  AllItems.innerText = totalquantityCalculation();
-
-  return AllItems;
-}
-
-function totalquantityCalculation() {
-  let cart = getCart();
-  let number = 0;
-
-  cart.forEach((sumItem) => {
-    number += eval(sumItem.quantity);
-  });
-
-  return number;
-}
-
-function displayTotalPrice(product) {
+function displayTotalPrice(num) {
   const TotalPrice = document.querySelector("#totalPrice");
-  TotalPrice.innerText = totalPriceCalculation(product);
-  return TotalPrice;
+  TotalPrice.innerText = num;
 }
 
-function totalPriceCalculation(product) {
-  let cart = getCart();
-  let total = [];
+function displayTotalQuantity(num) {
+  const AllItems = document.querySelector("#totalQuantity");
+  AllItems.innerText = num;
+}
 
-  cart.forEach((sumPrice) => {
-    total.push(product.price * sumPrice.quantity);
+function totalquantityCalculation(cart) {
+  let total = 0;
+  cart.forEach((product) => {
+    total += Number(product.quantity);
   });
-  let totalPrice = `${eval(total.join("+"))}`;
+  return total;
+}
+
+async function totalPriceCalculation(cart) {
+  let totalPrice = 0;
+  for (const product of cart) {
+    const price = await getPriceFromApi(product);
+    totalPrice += Number(price) * Number(product.quantity);
+  }
   return totalPrice;
 }
-
 //  =====================  Gestion du formulaire
 const SubmitBtn = document.querySelector(".cart__order__form__submit");
 

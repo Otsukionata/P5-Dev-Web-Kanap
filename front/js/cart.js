@@ -179,7 +179,7 @@ function changeBtn(product) {
       let productQuantity = Number(this.value);
       modifyQuantity(productId, productColor, productQuantity);
     } else {
-      QuantityChange.value = product.quantity;
+      QuantityChange.value = Number(product.quantity);
     }
   });
 
@@ -222,12 +222,11 @@ function modifyQuantity(id, color, quantity) {
 
 function deleteProduct(id, color) {
   let cart = getCart();
-  let newItem = cart.find((p) => p.id !== id && p.color !== color);
-  cart.splice(newItem, 1);
+  let deleteItem = cart.filter((p) => p.id !== id || p.color !== color);
 
   alert("Ce produit va être supprimé du panier !");
 
-  saveCart(cart);
+  saveCart(deleteItem);
 }
 
 // *** Affichage des totaux

@@ -172,10 +172,21 @@ function changeBtn(product) {
   QuantityChange.setAttribute("value", product.quantity);
   QuantityChange.setAttribute("aria-label", "Nombre d'articles");
   QuantityChange.addEventListener("change", function () {
-    let productId = this.closest("article").dataset.id;
-    let productColor = this.closest("article").dataset.color;
-    let productQuantity = this.value;
-    modifyQuantity(productId, productColor, productQuantity);
+    QuantityChange.addEventListener("change", () => {
+      // Empêcher d'entrer une valeur négative ou une quantité supérieure à 100
+      if (
+        QuantityChange.value > 0 &&
+        QuantityChange.value < 101 &&
+        QuantityChange.value % 1 == 0
+      ) {
+        let productId = this.closest("article").dataset.id;
+        let productColor = this.closest("article").dataset.color;
+        let productQuantity = Number(this.value);
+        modifyQuantity(productId, productColor, productQuantity);
+      } else {
+        QuantityChange.value = product.quantity;
+      }
+    });
   });
 
   ProductQuantity.appendChild(QuantityNumber);
@@ -208,7 +219,7 @@ function modifyQuantity(id, color, quantity) {
   let cart = getCart();
   let getProduct = cart.find((p) => p.id == id && p.color == color);
   if (getProduct != undefined) {
-    getProduct.quantity = quantity;
+    getProduct.quantity = Number(quantity);
   }
   window.location.reload(true);
 

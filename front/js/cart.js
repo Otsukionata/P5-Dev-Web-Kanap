@@ -50,13 +50,14 @@ async function completeCart() {
   displayTotalPrice(totalPrice);
 }
 
+// L'appel à la fonction pour affichage
 completeCart();
 
 //  =====================  Fonctions permettant l'affichage du panier
 function container(DisplayArticle) {
   document.querySelector("#cart__items").appendChild(DisplayArticle);
 }
-
+// Réunion des fonctions de création des éléments du DOM
 function productDisplay(product) {
   const DisplayArticle = displayArticle(product);
   container(DisplayArticle);
@@ -72,6 +73,7 @@ function productDisplay(product) {
   return DisplayArticle;
 }
 
+// *** Création d'une fiche contentant un article du panier
 function displayArticle(product) {
   const Article = document.createElement("article");
   Article.classList.add("cart__item");
@@ -220,6 +222,7 @@ function modifyQuantity(id, color, quantity) {
   saveCart(cart);
 }
 
+// *** La suppression
 function deleteProduct(id, color) {
   let cart = getCart();
   let deleteItem = cart.filter((p) => p.id !== id || p.color !== color);
@@ -235,11 +238,13 @@ function displayTotalPrice(num) {
   TotalPrice.innerText = num;
 }
 
+// Quantité totale
 function displayTotalQuantity(num) {
   const AllItems = document.querySelector("#totalQuantity");
   AllItems.innerText = num;
 }
 
+// Calcul des quantités totales des articles du panier
 function totalquantityCalculation(cart) {
   let total = 0;
   cart.forEach((product) => {
@@ -248,6 +253,7 @@ function totalquantityCalculation(cart) {
   return total;
 }
 
+// Calcul du montant total du panier
 async function totalPriceCalculation(cart) {
   let totalPrice = 0;
   for (const product of cart) {
@@ -289,6 +295,8 @@ SubmitBtn.addEventListener("click", function (e) {
   let cityErrMsg = document.querySelector("#cityErrorMsg");
   let mailErrMsg = document.querySelector("#emailErrorMsg");
 
+  /* Le prénom et le nom de famille doivent accepter les accents (majuscules accentuées incluses), les "ç", et les traits d'union
+  Ex : François, Marie-Élodie */
   function forenameControl() {
     const Forename = contact.firstName;
     if (RegExIdentity(Forename)) {
@@ -312,6 +320,7 @@ SubmitBtn.addEventListener("click", function (e) {
     }
   }
 
+  // Les adresses de type "Résidence Montgérald, Bâtiment M, Porte 18" doivent pouvoir être acceptées
   function addressControl() {
     const Address = contact.address;
     if (RegExAdress(Address)) {
@@ -335,6 +344,7 @@ SubmitBtn.addEventListener("click", function (e) {
     }
   }
 
+  // Seul le format mail est accepté : "exemple@mail.com"
   function mailControl() {
     const Email = contact.email;
     if (
@@ -364,12 +374,14 @@ SubmitBtn.addEventListener("click", function (e) {
     return;
   }
 
+  // Création du tableau contenant les identifiants des produits commandés
   let products = [];
   let cart = getCart();
   cart.forEach((item) => {
     products.push(item.id);
   });
 
+  // Création de l'objet contenant le tableau d'identifiants et l'objet d'informations clientèle
   const Order = {
     products,
     contact,
@@ -382,12 +394,15 @@ SubmitBtn.addEventListener("click", function (e) {
       "Content-Type": "application/json",
     },
 
+    // L'objet "Order" est envoyé ici
     body: JSON.stringify(Order),
   })
+    // La réponse du back
     .then(function (response) {
       const Response = response.json();
       return Response;
     })
+    // Récupération du numéro de commande envoyé par le back, vidage du LS et redirection
     .then(function (json) {
       const ID = json.orderId;
       window.location = `./confirmation.html?id=${ID}`;

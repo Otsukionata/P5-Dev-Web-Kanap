@@ -7,11 +7,7 @@ async function getProducts() {
 }
 getProducts();
 
-/**
- *
- * @param { Array } product
- */
-
+// La boucle d'affichage des produits
 function createProduct(product) {
   for (let i = 0; i < product.length; i++) {
     // Balise récupérant les cartes dans le DOM

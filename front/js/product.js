@@ -66,7 +66,11 @@ fetch("http://localhost:3000/api/products/" + ID)
       if (ColorChoice === "") {
         //  Pour s'assurer qu'une couleur a été choisie
         alert("Veuillez choisir une couleur");
-      } else if (KanapQuantity == 0) {
+      } else if (
+        KanapQuantity == 0 &&
+        KanapQuantity <= 101 &&
+        KanapQuantity >= 0
+      ) {
         //  Pour s'assurer qu'une quantité a été entrée
         alert("Veuillez choisir une quantité");
       } else {
@@ -95,6 +99,7 @@ fetch("http://localhost:3000/api/products/" + ID)
             p.color === product.color
         );
 
+        // Gestion des quantités : ce qui se passe se lon qu'il y a déjà un article en particulier ou pas.
         if (foundProduct === undefined) {
           cart.push(product);
         } else {
